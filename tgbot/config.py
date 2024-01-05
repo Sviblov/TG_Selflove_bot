@@ -58,9 +58,9 @@ class DbConfig:
         Creates the DbConfig object from environment variables.
         """
         host = env.str("DB_HOST")
-        password = env.str("POSTGRES_PASSWORD")
-        user = env.str("POSTGRES_USER")
-        database = env.str("POSTGRES_DB")
+        password = env.str("PG_PASSWORD")
+        user = env.str("PG_USER")
+        database = env.str("PG_DB")
         port = env.int("DB_PORT", 5432)
         return DbConfig(
             host=host, password=password, user=user, database=database, port=port
@@ -187,7 +187,7 @@ def load_config(path: str = None) -> Config:
 
     return Config(
         tg_bot=TgBot.from_env(env),
-        # db=DbConfig.from_env(env),
-        # redis=RedisConfig.from_env(env),
+        db=DbConfig.from_env(env),
+        redis=RedisConfig.from_env(env),
         misc=Miscellaneous(),
     )
