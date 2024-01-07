@@ -88,7 +88,8 @@ def get_storage(config):
 
 async def main():
     setup_logging()
-#testing commit messages
+
+
     config = load_config(".env")
     storage = get_storage(config)
 
