@@ -1,4 +1,5 @@
-#stopping docker containers
+#!/bin/bash
+
 sudo docker stop selflove_bot
 
 git -C /home/ubuntu/TG_Selflove_bot pull
