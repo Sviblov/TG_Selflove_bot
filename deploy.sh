@@ -7,4 +7,4 @@ git -C /home/ubuntu/TG_Selflove_bot pull
 
 sudo docker build -t selflove -f /home/ubuntu/TG_Selflove_bot .
 
-sudo docker run --name selflove_bot selflove
+sudo docker run -d --name selflove_bot selflove
