@@ -1,4 +1,6 @@
+import logging
 from typing import Optional
+
 
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
@@ -6,6 +8,7 @@ from sqlalchemy.dialects.postgresql import insert
 from infrastructure.database.models import standard_message
 from infrastructure.database.repo.base import BaseRepo
 
+logger = logging.getLogger('standard_messages')
 
 class standardMessageRepo(BaseRepo):
     async def get_standardMessages(
@@ -25,4 +28,11 @@ class standardMessageRepo(BaseRepo):
 
         first_row=row.first()
         
-        return first_row[0]
+        if first_row is None:
+            message = "Error code 1. Contact administrator"
+            logger.info("Error code no messages defined when queryng standard messages")
+        else:
+            message = first_row[0]
+
+
+        return message

@@ -64,6 +64,7 @@ def setup_logging():
     )
     logger = logging.getLogger(__name__)
     logger.info("Starting bot")
+    return logger
 
 
 def get_storage(config):
@@ -87,7 +88,7 @@ def get_storage(config):
 
 
 async def main():
-    setup_logging()
+    logger = setup_logging()
 
 
     config = load_config(".env")
