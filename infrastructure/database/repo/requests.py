@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from infrastructure.database.repo.users import UserRepo
-from infrastructure.database.repo.standard_messages import standardMessageRepo
+from infrastructure.database.repo.standard_messages import standardMessageRepo, standardButtonsRepo
 from infrastructure.database.setup import create_engine
 
 
@@ -30,6 +30,13 @@ class RequestsRepo:
         The User repository sessions are required to manage user operations.
         """
         return standardMessageRepo(self.session)
+    
+    @property
+    def standardButtons(self) -> standardButtonsRepo:
+        """
+        The User repository sessions are required to manage user operations.
+        """
+        return standardButtonsRepo(self.session)
 
 
 

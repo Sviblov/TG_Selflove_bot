@@ -5,8 +5,10 @@ from aiogram.types import Message
 
 
 class ConfigMiddleware(BaseMiddleware):
-    def __init__(self, config) -> None:
+    def __init__(self, config, bot) -> None:
         self.config = config
+        self.bot = bot
+
 
     async def __call__(
         self,
@@ -15,4 +17,6 @@ class ConfigMiddleware(BaseMiddleware):
         data: Dict[str, Any],
     ) -> Any:
         data["config"] = self.config
+        data["bot"] = self.bot
+        
         return await handler(event, data)

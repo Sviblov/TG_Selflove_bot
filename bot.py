@@ -19,7 +19,7 @@ async def on_startup(bot: Bot, admin_ids: list[int]):
     await broadcaster.broadcast(bot, admin_ids, "Бот запущен")
 
 
-def register_global_middlewares(dp: Dispatcher, config: Config, session_pool=None):
+def register_global_middlewares(dp: Dispatcher, config: Config, bot: Bot, session_pool=None):
     """
     Register global middlewares for the given dispatcher.
     Global middlewares here are the ones that are applied to all the handlers (you specify the type of update)
@@ -31,7 +31,7 @@ def register_global_middlewares(dp: Dispatcher, config: Config, session_pool=Non
     :return: None
     """
     middleware_types = [
-        ConfigMiddleware(config),
+        ConfigMiddleware(config, bot),
         DatabaseMiddleware(session_pool),
     ]
 
@@ -64,7 +64,7 @@ def setup_logging():
     )
     logger = logging.getLogger(__name__)
     logger.info("Starting bot")
-    return logger
+   
 
 
 def get_storage(config):
@@ -88,7 +88,7 @@ def get_storage(config):
 
 
 async def main():
-    logger = setup_logging()
+    setup_logging()
 
 
     config = load_config(".env")
@@ -103,7 +103,7 @@ async def main():
 
     dp.include_routers(*routers_list)
 
-    register_global_middlewares(dp, config, session_pool)
+    register_global_middlewares(dp, config, bot, session_pool)
 
     await on_startup(bot, config.tg_bot.admin_ids)
     await dp.start_polling(bot)

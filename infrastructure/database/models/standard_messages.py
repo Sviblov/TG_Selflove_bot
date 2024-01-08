@@ -20,3 +20,19 @@ class standard_message(Base,TableNameMixin):
 
     def __repr__(self):
         return f"<StandardMessage {self.key} {self.language}>"
+    
+
+class standard_button(Base,TableNameMixin):
+    """
+    This class represents a Standard Message in the application.
+    """
+    key: Mapped[str]  = mapped_column(String(32), primary_key=True, autoincrement=False)
+    menu_key: Mapped[str]  = mapped_column(String(32),primary_key=True, autoincrement=False)
+    language: Mapped[str] = mapped_column(String(10), server_default=text("'en'"))
+    button_text: Mapped[str]  = mapped_column(String(256))
+    callback_data: Mapped[str]  = mapped_column(String(32))
+    comment: Mapped[str]  = mapped_column(String(256))
+
+
+    def __repr__(self):
+        return f"<StandardMessage {self.key} {self.language}>"

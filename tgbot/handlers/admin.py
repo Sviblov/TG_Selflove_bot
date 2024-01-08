@@ -9,6 +9,7 @@ from ..misc.states import UserStates
 from infrastructure.database.repo.requests import RequestsRepo
 from infrastructure.database.models.users import User
 
+
 admin_router = Router()
 admin_router.message.filter(AdminFilter())
 
@@ -18,5 +19,5 @@ async def admin_start(message: Message,  state: FSMContext, repo: RequestsRepo, 
 
     
     replyText = [await repo.standardMessages.get_standardMessages('start_admin','en'), "userID:", str(message.from_user.id), user.language]
-    
+
     await message.reply("\n".join(replyText))

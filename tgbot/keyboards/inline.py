@@ -4,19 +4,20 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
 # This is a simple keyboard, that contains 2 buttons
-def very_simple_keyboard():
-    buttons = [
-        [
-            InlineKeyboardButton(text="📝 Створити замовлення",
-                                 callback_data="create_order"),
-            InlineKeyboardButton(text="📋 Мої замовлення", callback_data="my_orders"),
-        ],
-    ]
+def StandardButtonMenu(ButtonsData):
 
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=buttons,
-    )
-    return keyboard
+    keyboard = InlineKeyboardBuilder()
+    keyboard.adjust(1)
+    for button in ButtonsData:
+        keyboard.button(
+            text=button[0],
+            # Here we use an instance of OrderCallbackData class as callback_data parameter
+            # order id is the field in OrderCallbackData class, that we defined above
+            callback_data=button[1]
+        )
+
+    return keyboard.as_markup()
+
 
 
 # This is the same keyboard, but created with InlineKeyboardBuilder (preferred way)
