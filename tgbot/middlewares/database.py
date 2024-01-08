@@ -26,7 +26,7 @@ class DatabaseMiddleware(BaseMiddleware):
                 event.from_user.username
             )
 
-            data["session"] = session
+            #data["session"] = session
             data["repo"] = repo
             data["user"] = user
 
