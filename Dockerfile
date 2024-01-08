@@ -9,7 +9,7 @@ COPY requirements.txt /usr/src/app/bot
 RUN pip install -r /usr/src/app/bot/requirements.txt
 COPY . /usr/src/app/bot
 
-RUN CHMOD +x /usr/src/app/bot/docker-entrypoint.sh
+RUN chmod +x /usr/src/app/bot/docker-entrypoint.sh
 
 # Set the entrypoint command
 ENTRYPOINT ["/usr/src/app/bot/docker-entrypoint.sh"]
