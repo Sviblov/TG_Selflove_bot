@@ -2,6 +2,7 @@ from typing import Optional
 
 from sqlalchemy import String
 from sqlalchemy import text, BIGINT, Boolean, true
+from sqlalchemy.dialects.postgresql import TEXT
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
@@ -14,7 +15,7 @@ class standard_message(Base,TableNameMixin):
     """
     key: Mapped[str]  = mapped_column(String(32), primary_key=True, autoincrement=False)
     language: Mapped[str] = mapped_column(String(10), server_default=text("'en'"))
-    message: Mapped[str]  = mapped_column(String(256))
+    message: Mapped[str]  = mapped_column(TEXT)
     comment: Mapped[str]  = mapped_column(String(256))
 
 
