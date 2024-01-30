@@ -21,7 +21,7 @@ class message(Base):
     message_type: Mapped[str] = mapped_column(String(16))
     user_from: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
     user_to: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
-    text: Mapped[str]  = mapped_column(String(256))
+    text: Mapped[str]  = mapped_column(String(256),nullable=True)
     sent_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
 
     def __repr__(self):

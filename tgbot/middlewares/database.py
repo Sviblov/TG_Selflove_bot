@@ -7,8 +7,9 @@ from infrastructure.database.repo.requests import RequestsRepo
 
 
 class DatabaseMiddleware(BaseMiddleware):
-    def __init__(self, session_pool) -> None:
+    def __init__(self, session_pool, bot) -> None:
         self.session_pool = session_pool
+        self.bot = bot
 
     async def __call__(
         self,
@@ -16,6 +17,7 @@ class DatabaseMiddleware(BaseMiddleware):
         event: Message,
         data: Dict[str, Any],
     ) -> Any:
+        
         async with self.session_pool() as session:
             repo = RequestsRepo(session)
 
@@ -31,4 +33,7 @@ class DatabaseMiddleware(BaseMiddleware):
             data["user"] = user
 
             result = await handler(event, data)
+
+
+
         return result

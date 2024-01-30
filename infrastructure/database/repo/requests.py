@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from infrastructure.database.repo.users import UserRepo
 from infrastructure.database.repo.standard_messages import standardMessageRepo, standardButtonsRepo
+from infrastructure.database.repo.log_message import logMessageRepo
 from infrastructure.database.setup import create_engine
 
 
@@ -38,7 +39,10 @@ class RequestsRepo:
         """
         return standardButtonsRepo(self.session)
 
+    @property
+    def log_message(self) -> logMessageRepo:
 
+        return logMessageRepo(self.session)
 
 if __name__ == "__main__":
     from infrastructure.database.setup import create_session_pool

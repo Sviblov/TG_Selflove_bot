@@ -10,7 +10,9 @@ from tgbot.config import load_config, Config
 from tgbot.handlers import routers_list
 from tgbot.middlewares.config import ConfigMiddleware
 from tgbot.middlewares.database import DatabaseMiddleware
+from tgbot.middlewares.messageLogging import IncomingLoggingMiddleware, OutcomingLoggingMiddleware
 from tgbot.services import broadcaster
+from aiogram.methods.send_message import SendMessage
 
 from infrastructure.database.setup import create_engine
 from infrastructure.database.setup import create_session_pool
@@ -32,13 +34,17 @@ def register_global_middlewares(dp: Dispatcher, config: Config, bot: Bot, sessio
     """
     middleware_types = [
         ConfigMiddleware(config, bot),
-        DatabaseMiddleware(session_pool),
+        DatabaseMiddleware(session_pool, bot),
+        IncomingLoggingMiddleware(session_pool, bot)
     ]
 
     for middleware_type in middleware_types:
         dp.message.outer_middleware(middleware_type)
         dp.callback_query.outer_middleware(middleware_type)
 
+    bot.session.middleware(OutcomingLoggingMiddleware(session_pool, include_methods=[SendMessage]))
+
+    
 
 def setup_logging():
     """
@@ -98,7 +104,7 @@ async def main():
     session_pool=create_session_pool(db_engine)
 
     bot = Bot(token=config.tg_bot.token, parse_mode="HTML")
-
+    
     dp = Dispatcher(storage=storage)
 
     dp.include_routers(*routers_list)
