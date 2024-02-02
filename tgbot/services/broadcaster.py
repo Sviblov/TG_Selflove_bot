@@ -5,7 +5,7 @@ from typing import Union
 from aiogram import Bot
 from aiogram import exceptions
 from aiogram.types import InlineKeyboardMarkup
-
+from infrastructure.database.repo.requests import RequestsRepo
 
 async def send_message(
     bot: Bot,
@@ -13,6 +13,7 @@ async def send_message(
     text: str,
     disable_notification: bool = False,
     reply_markup: InlineKeyboardMarkup = None,
+    repo: RequestsRepo = None,
 ) -> bool:
     """
     Safe messages sender
@@ -25,12 +26,15 @@ async def send_message(
     :return: success.
     """
     try:
-        await bot.send_message(
+        replyMessage = await bot.send_message(
             user_id,
             text,
             disable_notification=disable_notification,
             reply_markup=reply_markup,
         )
+        if repo is not None:
+            await repo.log_message.put_message(replyMessage,  user_from=bot.id, user_to=user_id)
+
     except exceptions.TelegramBadRequest as e:
         logging.error("Telegram server says - Bad Request: chat not found")
     except exceptions.TelegramForbiddenError:

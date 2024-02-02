@@ -12,7 +12,7 @@ from aiogram import Bot
 from infrastructure.database.repo.requests import RequestsRepo
 
 
-class IncomingLoggingMiddleware(BaseMiddleware):
+class LoggingMiddleware(BaseMiddleware):
     def __init__(self, session_pool, bot) -> None:
         self.session_pool = session_pool
         self.bot = bot
@@ -32,19 +32,19 @@ class IncomingLoggingMiddleware(BaseMiddleware):
     
         return result
 
-class OutcomingLoggingMiddleware(BaseRequestMiddleware):
-    def __init__(self, session_pool, include_methods = None) -> None:
-        self.session_pool = session_pool
-        self.include_methods = include_methods if include_methods else []
+# class OutcomingLoggingMiddleware(BaseRequestMiddleware):
+#     def __init__(self, session_pool, include_methods = None) -> None:
+#         self.session_pool = session_pool
+#         self.include_methods = include_methods if include_methods else []
 
-    async def __call__(
-        self,
-        make_request: NextRequestMiddlewareType[TelegramType],
-        bot: Bot,
-        method: TelegramMethod[TelegramType]
-    ) -> TelegramType:
+#     async def __call__(
+#         self,
+#         make_request: NextRequestMiddlewareType[TelegramType],
+#         bot: Bot,
+#         method: TelegramMethod[TelegramType]
+#     ) -> TelegramType:
         
-        if type(method) in self.include_methods:
-            print(method.text)
+#         if type(method) in self.include_methods:
+#             print(method.text)
         
-        return await make_request(bot, method)
+#         return await make_request(bot, method)

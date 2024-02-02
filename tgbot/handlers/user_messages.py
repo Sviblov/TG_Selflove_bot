@@ -27,14 +27,17 @@ async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bo
     
     
     replyText=await repo.standardMessages.get_standardMessages('welcome_new_1','en')
-    replyMessage = await send_message(bot, user.user_id, replyText)
-
-
-    replyText=await repo.standardMessages.get_standardMessages('welcome_new_2','en')
     replyButtons= await repo.standardButtons.get_standardButtons('start_test', 'en')
-
     replyMarkup=StandardButtonMenu(replyButtons)
-    replyMessage = await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup)
+    
+    replyMessage = await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+    
+
+    # replyText=await repo.standardMessages.get_standardMessages('welcome_new_2','en')
+    # replyButtons= await repo.standardButtons.get_standardButtons('start_test', 'en')
+
+    # replyMarkup=StandardButtonMenu(replyButtons)
+    # replyMessage = await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup)
 
     await state.set_state(UserStates.new_user)
 
