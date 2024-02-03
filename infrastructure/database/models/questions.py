@@ -5,7 +5,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import text, BIGINT, Float
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-
+from sqlalchemy.dialects.postgresql import TEXT
 
 
 from .base import Base, TimestampMixin, TableNameMixin
@@ -19,7 +19,7 @@ class question(Base):
     question_id: Mapped[int] = mapped_column(BIGINT, primary_key=True, autoincrement=True)
     questionaire_id: Mapped[int] = mapped_column(ForeignKey("questionaires.questionaire_id"))
     language: Mapped[str] = mapped_column(String(10), server_default=text("'en'"))
-    question: Mapped[str]  = mapped_column(String(256))
+    question: Mapped[str]  = mapped_column(TEXT)
     comment: Mapped[str]  = mapped_column(String(256))
 
 

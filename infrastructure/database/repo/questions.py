@@ -1,17 +1,17 @@
 import logging
-from typing import Optional, List
+from typing import List
 
 
 from sqlalchemy import select
-from sqlalchemy.dialects.postgresql import insert
 
-from infrastructure.database.models import questionaire, question, questions
+
+from infrastructure.database.models import question, questions, answer_option
 
 from infrastructure.database.repo.base import BaseRepo
 
 logger = logging.getLogger('questions')
 
-class getQuestions(BaseRepo):
+class QuestionRepo(BaseRepo):
     async def get_Questions(
         self,
         questionaire_id: int,
@@ -29,4 +29,16 @@ class getQuestions(BaseRepo):
 
         questions = await self.session.execute(select_data)
 
-        return questions
+        return questions.scalars()
+    
+    async def get_Answers(
+        self,
+        question_id: int,
+        language: str,
+    ) -> List[answer_option]:
+        
+        select_data = select(answer_option).where(answer_option.question_id==question_id, answer_option.language==language)
+
+        answers = await self.session.execute(select_data)
+
+        return answers.scalars()

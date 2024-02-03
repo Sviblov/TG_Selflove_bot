@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Union
+from typing import Union, List
 
 from aiogram import Bot
 from aiogram import exceptions
@@ -45,7 +45,7 @@ async def send_message(
         )
         await asyncio.sleep(e.retry_after)
         return await send_message(
-            bot, user_id, text, disable_notification, reply_markup
+            bot, user_id, text, disable_notification, reply_markup, repo
         )  # Recursive call
     except exceptions.TelegramAPIError:
         logging.exception(f"Target [ID:{user_id}]: failed")
@@ -113,6 +113,48 @@ async def delete_message(
     except exceptions.TelegramAPIError:
         logging.exception(f"Target [ID:{chat_id}]: failed")
     else:
-        logging.info(f"Target [ID:{chat_id}]: success")
+        logging.info(f"Message Deleted in [ID:{chat_id}]: success")
         return True
+    return False
+
+
+async def send_poll(
+    bot: Bot,
+    user_id: Union[int, str],
+    question_text: str,
+    answer_options: List[str],
+    repo: RequestsRepo = None,
+) -> bool:
+    """
+    Safe messages sender
+
+    :param bot: Bot instance.
+    :param user_id: user id. If str - must contain only digits.
+    :param text: text of the message.
+    :param disable_notification: disable notification or not.
+    :param reply_markup: reply markup.
+    :return: success.
+    """
+    try:
+        replyQuestionaire = await bot.send_poll(user_id,question_text,answer_options,is_anonymous=False)
+        if repo is not None:
+            await repo.log_message.put_message(replyQuestionaire,  user_from=bot.id, user_to=user_id)
+
+    except exceptions.TelegramBadRequest as e:
+        logging.error("Telegram server says - Bad Request")
+    except exceptions.TelegramForbiddenError:
+        logging.error(f"Target [ID:{user_id}]: got TelegramForbiddenError")
+    except exceptions.TelegramRetryAfter as e:
+        logging.error(
+            f"Target [ID:{user_id}]: Flood limit is exceeded. Sleep {e.retry_after} seconds."
+        )
+        await asyncio.sleep(e.retry_after)
+        return await send_poll(
+            bot, user_id, question_text, answer_options, repo
+        )  # Recursive call
+    except exceptions.TelegramAPIError:
+        logging.exception(f"Target [ID:{user_id}]: failed")
+    else:
+        logging.info(f"Poll sent [ID:{user_id}]: success")
+        return replyQuestionaire.message_id
     return False

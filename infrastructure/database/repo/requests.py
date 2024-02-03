@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from infrastructure.database.repo.users import UserRepo
 from infrastructure.database.repo.standard_messages import standardMessageRepo, standardButtonsRepo
 from infrastructure.database.repo.log_message import logMessageRepo
+from infrastructure.database.repo.questions import QuestionRepo
 from infrastructure.database.setup import create_engine
 
 
@@ -43,6 +44,13 @@ class RequestsRepo:
     def log_message(self) -> logMessageRepo:
 
         return logMessageRepo(self.session)
+
+    @property
+    def questions(self) -> QuestionRepo:
+        """
+        The User repository sessions are required to manage user operations.
+        """
+        return QuestionRepo(self.session)
 
 if __name__ == "__main__":
     from infrastructure.database.setup import create_session_pool
