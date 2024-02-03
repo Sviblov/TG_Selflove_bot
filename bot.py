@@ -97,6 +97,7 @@ async def main():
     setup_logging()
 
 
+
     config = load_config(".env")
     storage = get_storage(config)
 
