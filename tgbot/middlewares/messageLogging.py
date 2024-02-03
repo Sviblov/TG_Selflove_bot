@@ -31,20 +31,3 @@ class LoggingMiddleware(BaseMiddleware):
             result = await handler(event, data)
     
         return result
-
-# class OutcomingLoggingMiddleware(BaseRequestMiddleware):
-#     def __init__(self, session_pool, include_methods = None) -> None:
-#         self.session_pool = session_pool
-#         self.include_methods = include_methods if include_methods else []
-
-#     async def __call__(
-#         self,
-#         make_request: NextRequestMiddlewareType[TelegramType],
-#         bot: Bot,
-#         method: TelegramMethod[TelegramType]
-#     ) -> TelegramType:
-        
-#         if type(method) in self.include_methods:
-#             print(method.text)
-        
-#         return await make_request(bot, method)

@@ -4,6 +4,7 @@ from typing import Optional
 
 
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy import select
 
 from infrastructure.database.models import message as logmessage
 
@@ -20,15 +21,6 @@ class logMessageRepo(BaseRepo):
         user_to: int,
         user_from: int
     ):
-    #     chat_id: Mapped[int] = mapped_column(BIGINT)
-    # message_id: Mapped[int] = mapped_column(BIGINT, primary_key=True)
-    # message_type: Mapped[str] = mapped_column(String(16))
-    # user_from: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
-    # user_to: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
-    # text: Mapped[str]  = mapped_column(String(256))
-    # sent_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
-        
-        
 
         insert_log_message = (
             insert(logmessage)
@@ -46,4 +38,16 @@ class logMessageRepo(BaseRepo):
         result = await self.session.execute(insert_log_message)
 
         await self.session.commit()
-      
+
+    async def get_messages(
+      self,
+      user_id: int      
+    ):
+        select_data = select(logmessage.chat_id, logmessage.message_id).where(
+                    (logmessage.user_from==user_id) | (logmessage.user_to==user_id)
+                    )
+        
+
+        allMessages = await self.session.execute(select_data)
+       
+        return allMessages

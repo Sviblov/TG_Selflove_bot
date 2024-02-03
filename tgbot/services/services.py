@@ -85,3 +85,34 @@ async def broadcast(
         logging.info(f"{count} messages successful sent.")
 
     return count
+
+async def delete_message(
+    bot: Bot,
+    chat_id: Union[int, str],
+    message_id: Union[int,str],
+
+) -> bool:
+
+    try:
+        deleteMessage = await bot.delete_message(
+            chat_id,message_id
+        )
+      
+    except exceptions.TelegramBadRequest as e:
+        logging.error("Telegram server says - Bad Request: chat not found")
+    except exceptions.TelegramForbiddenError:
+        logging.error(f"Target [ID:{chat_id}]: got TelegramForbiddenError")
+    except exceptions.TelegramRetryAfter as e:
+        logging.error(
+            f"Target [ID:{chat_id}]: Flood limit is exceeded. Sleep {e.retry_after} seconds."
+        )
+        await asyncio.sleep(e.retry_after)
+        return await delete_message(
+            bot, chat_id, message_id
+        )  # Recursive call
+    except exceptions.TelegramAPIError:
+        logging.exception(f"Target [ID:{chat_id}]: failed")
+    else:
+        logging.info(f"Target [ID:{chat_id}]: success")
+        return True
+    return False

@@ -11,8 +11,6 @@ def StandardButtonMenu(ButtonsData):
     for button in ButtonsData:
         keyboard.button(
             text=button[0],
-            # Here we use an instance of OrderCallbackData class as callback_data parameter
-            # order id is the field in OrderCallbackData class, that we defined above
             callback_data=button[1]
         )
 
