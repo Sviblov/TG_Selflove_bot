@@ -29,9 +29,6 @@ async def start_test(callback: CallbackQuery, state: FSMContext, repo: RequestsR
     # repo.getQuestions
     # Send questionaire by 
 
-    replyText='Тут присылаются вопросы к тесту'
-    replyMessage = await send_message(bot, user.user_id, replyText, repo=repo)
-    
     await send_questionaire(bot, user.user_id,1,'en',repo)
 
     await state.set_state(UserStates.test_started)
