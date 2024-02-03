@@ -10,6 +10,7 @@ from infrastructure.database.repo.requests import RequestsRepo
 from infrastructure.database.models.users import User
 
 from ..services.services import send_message, delete_message
+from ..services.send_questionaire import send_questionaire
 
 from ..misc.states import UserStates
 
@@ -22,9 +23,17 @@ user_callbacks_router = Router()
 @user_callbacks_router.callback_query(F.data=="start_test", StateFilter(UserStates.new_user))
 async def start_test(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     
+    # 1) выбираются вопросы 
+    #   для каждого вопроса выбираются ответы
+    # отправляется опросник
+    # repo.getQuestions
+    # Send questionaire by 
+
     replyText='Тут присылаются вопросы к тесту'
     replyMessage = await send_message(bot, user.user_id, replyText, repo=repo)
-   
+    
+    await send_questionaire(bot, user.user_id,1,'en',repo)
+
     await state.set_state(UserStates.test_started)
 
 @user_callbacks_router.callback_query(F.data=="start_test", StateFilter(UserStates.test_started))
