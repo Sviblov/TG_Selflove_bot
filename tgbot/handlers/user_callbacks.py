@@ -31,9 +31,8 @@ async def start_test(callback: CallbackQuery, state: FSMContext, repo: RequestsR
 async def notify_about_started_test(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     
     replyText=await repo.standardMessages.get_standardMessages('test_already_started','en')
-    replyMessage = await send_message(bot, user.user_id, replyText)
-    replyMessage = await send_message(bot, user.user_id, replyText)
-   
+    replyMessage = await send_message(bot, user.user_id, replyText, repo=repo)
+
 
 @user_callbacks_router.callback_query(F.data=="delete_all")
 async def delete_messages(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
