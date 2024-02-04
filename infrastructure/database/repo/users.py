@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
-from infrastructure.database.models import User
+from infrastructure.database.models import User,supported_language
 from infrastructure.database.repo.base import BaseRepo
 
 
@@ -45,3 +45,23 @@ class UserRepo(BaseRepo):
 
         await self.session.commit()
         return result.scalar_one()
+
+
+    async def supported_language(
+        self,
+        language: str
+    )-> bool:
+        
+        select_data = select(supported_language).where(supported_language.language==language)
+        result = await self.session.execute(select_data)
+        first_row = result.first()
+        if first_row:
+            return language
+        else:
+            # select_data=select(supported_language).where(supported_language.is_default==True)
+            # result = await self.session.execute(select_data)
+            # first_row: supported_language=result.first()
+            # return first_row.language
+            
+            #In order not to overload DB:
+            return 'en'

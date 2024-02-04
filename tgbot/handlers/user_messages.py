@@ -17,31 +17,28 @@ from ..keyboards.inline import StandardButtonMenu
 
 user_messages_router = Router()
 
-
-@user_messages_router.message(CommandStart(),StateFilter(None,UserStates.new_user, UserStates.test_started))
+#to think - from which state we shour run on start
+@user_messages_router.message(CommandStart(),StateFilter(None))
 async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
-
     
-    replyText=await repo.standardMessages.get_standardMessages('welcome_new_1','en')
-    replyButtons= await repo.standardButtons.get_standardButtons('start_test', 'en')
+    replyText=await repo.interface.get_messageText('welcome_new_1',user.language)
+    replyButtons= await repo.interface.get_ButtonLables('welcome_new_1', user.language)
     replyMarkup=StandardButtonMenu(replyButtons)
     
-    replyMessage = await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+    await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
     
-
-    # replyText=await repo.standardMessages.get_standardMessages('welcome_new_2','en')
-    # replyButtons= await repo.standardButtons.get_standardButtons('start_test', 'en')
-
-    # replyMarkup=StandardButtonMenu(replyButtons)
-    # replyMessage = await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup)
-
-    await state.set_state(UserStates.new_user)
+    await state.set_state(UserStates.welcome_new_user_2)
 
 @user_messages_router.message(Command('security'))
-async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
-    replyText=await repo.standardMessages.get_standardMessages('security_desc','en')
-    replyButtons= await repo.standardButtons.get_standardButtons('security_desc', 'en')
+async def security_menu(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    replyText=await repo.interface.get_messageText('security_desc','en')
+    replyButtons= await repo.interface.get_ButtonLables('security_desc', 'en')
     replyMarkup=StandardButtonMenu(replyButtons)
     
     replyMessage = await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
-    
+
+
+@user_messages_router.message(CommandStart)
+async def security_menu(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    #sending main menu
+    pass

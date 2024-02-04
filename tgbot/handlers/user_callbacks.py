@@ -36,7 +36,7 @@ async def start_test(callback: CallbackQuery, state: FSMContext, repo: RequestsR
 @user_callbacks_router.callback_query(F.data=="start_test", StateFilter(UserStates.test_started))
 async def notify_about_started_test(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
-    replyText=await repo.standardMessages.get_standardMessages('test_already_started','en')
+    replyText=await repo.interface.get_messageText('test_already_started','en')
     replyMessage = await send_message(bot, user.user_id, replyText, repo=repo)
 
 
@@ -50,3 +50,26 @@ async def delete_messages(callback: CallbackQuery, state: FSMContext, repo: Requ
         await delete_message(bot, message[0],message[1])
     
     await state.set_state(None)
+
+@user_callbacks_router.callback_query(F.data=='welcome_2', StateFilter(UserStates.welcome_new_user_2))
+async def send_second_message(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    
+    replyText=await repo.interface.get_messageText('welcome_new_2',user.language)
+    replyButtons= await repo.interface.get_ButtonLables('welcome_new_2', user.language)
+    replyMarkup=StandardButtonMenu(replyButtons)
+    
+    await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+    
+    
+    await state.set_state(UserStates.start_questionaire_first)
+
+@user_callbacks_router.callback_query(F.data=='welcome_3', StateFilter(UserStates.start_questionaire_first))
+async def send_second_message(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    
+    replyText=await repo.interface.get_messageText('welcome_new_3',user.language)
+    replyButtons= await repo.interface.get_ButtonLables('welcome_new_3', user.language)
+    replyMarkup=StandardButtonMenu(replyButtons)
+    
+    await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)

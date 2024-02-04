@@ -6,3 +6,4 @@ from .questions import questionaire
 from .questions import question
 from .questions import answer_option
 from .messages import message
+from .supported_languages import supported_language

@@ -1,6 +1,9 @@
 from aiogram.filters.state import State, StatesGroup
 
 class UserStates(StatesGroup):
-    new_user = State() #New user didn't start the test, only welcome message received
+    
     test_started = State()
-    state3 = State()
+    welcome_new_user_2 = State() #new user second message
+    new_user = State()
+    main_menu = State()
+    start_questionaire_first=State()
