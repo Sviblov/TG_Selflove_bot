@@ -22,7 +22,7 @@ user_callbacks_router = Router()
 
 @user_callbacks_router.callback_query(F.data=="start_test", StateFilter(UserStates.new_user))
 async def start_test(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
-    callback.answer()
+    await callback.answer()
     # 1) выбираются вопросы 
     #   для каждого вопроса выбираются ответы
     # отправляется опросник
@@ -35,14 +35,14 @@ async def start_test(callback: CallbackQuery, state: FSMContext, repo: RequestsR
 
 @user_callbacks_router.callback_query(F.data=="start_test", StateFilter(UserStates.test_started))
 async def notify_about_started_test(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
-    callback.answer()
+    await callback.answer()
     replyText=await repo.standardMessages.get_standardMessages('test_already_started','en')
     replyMessage = await send_message(bot, user.user_id, replyText, repo=repo)
 
 
 @user_callbacks_router.callback_query(F.data=="delete_all")
 async def delete_messages(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
-    callback.answer()
+    await callback.answer()
     allMessages = await repo.log_message.get_messages(user.user_id)
   
     for message in allMessages:
