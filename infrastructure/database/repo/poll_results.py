@@ -2,8 +2,7 @@ import logging
 from typing import Optional, Union
 
 
-from sqlalchemy import select, insert
-from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy import select, insert, update
 
 from infrastructure.database.models import sentPoll
 
@@ -23,7 +22,7 @@ class ResultsRepo(BaseRepo):
         question_id: int,
         user_id: Union[int,str],
         answer: int = None
-    )-> sentPoll:
+    ):
         
         insert_poll = insert(sentPoll).values(
             poll_id=poll_id,
@@ -34,4 +33,20 @@ class ResultsRepo(BaseRepo):
             ).returning(sentPoll)
         result = await self.session.execute(insert_poll)
         await self.session.commit()
+    
+
+    async def updatePollResult(
+            self,
+            poll_id: str,
+            answer: int = None,
+
+    ):
+        update_request = update(sentPoll).where(
+            sentPoll.poll_id==poll_id
+            ).values(
+                selected_answer=answer
+                )
+        result = await self.session.execute(update_request)
+        await self.session.commit()
+
         
