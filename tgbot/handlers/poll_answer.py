@@ -19,6 +19,8 @@ logger = logging.getLogger('Poll_Answer')
 @poll_answer_router.poll_answer(StateFilter(UserStates.active_poll))
 async def register_poll_answer(poll_answer: PollAnswer, state: FSMContext, repo: RequestsRepo, bot: Bot):
     # update poll answer
+  
+
     #check that questionaire is complete
     if poll_answer.option_ids:
         repo.results.updatePollResult(poll_answer.poll_id, poll_answer.option_ids[0])
