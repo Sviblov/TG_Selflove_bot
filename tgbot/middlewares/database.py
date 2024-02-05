@@ -28,10 +28,11 @@ class DatabaseMiddleware(BaseMiddleware):
                     event.from_user.language_code,
                     event.from_user.username
                 )
+                data["user"] = user
 
             #data["session"] = session
             data["repo"] = repo
-            data["user"] = user
+            
 
             result = await handler(event, data)
 
