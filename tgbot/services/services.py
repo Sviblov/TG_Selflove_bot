@@ -136,7 +136,7 @@ async def send_poll(
     :return: success.
     """
     try:
-        replyQuestionaire = await bot.send_poll(user_id,question_text,answer_options,is_anonymous=False)
+        replyQuestionaire = await bot.send_poll(user_id,question_text,answer_options,is_anonymous=False, allows_multiple_answers=False)
         if repo is not None:
             await repo.log_message.put_message(replyQuestionaire,  user_from=bot.id, user_to=user_id)
 

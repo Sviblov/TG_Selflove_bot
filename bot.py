@@ -40,8 +40,8 @@ def register_global_middlewares(dp: Dispatcher, config: Config, bot: Bot, sessio
     for middleware_type in middleware_types:
         dp.message.outer_middleware(middleware_type)
         dp.callback_query.outer_middleware(middleware_type)
-
-    #Logging inly messages, not callback
+        # dp.poll_answer.outer_middleware(middleware_type)
+    #Logging only messages, not callback
     dp.message.outer_middleware(LoggingMiddleware(session_pool, bot))
    
     
@@ -107,7 +107,7 @@ async def main():
     bot = Bot(token=config.tg_bot.token, parse_mode="HTML")
     
     dp = Dispatcher(storage=storage)
-
+    
     dp.include_routers(*routers_list)
 
     register_global_middlewares(dp, config, bot, session_pool)

@@ -18,7 +18,7 @@ from ..keyboards.inline import StandardButtonMenu
 user_messages_router = Router()
 
 #to think - from which state we shour run on start
-@user_messages_router.message(CommandStart(),StateFilter(None))
+@user_messages_router.message(CommandStart(),StateFilter(None,UserStates.welcome_new_user_1))
 async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     
     replyText=await repo.interface.get_messageText('welcome_new_1',user.language)
@@ -27,7 +27,7 @@ async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bo
     
     await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
     
-    await state.set_state(UserStates.welcome_new_user_2)
+    await state.set_state(UserStates.welcome_new_user_1)
 
 @user_messages_router.message(Command('security'))
 async def security_menu(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
@@ -36,9 +36,3 @@ async def security_menu(message: Message, state: FSMContext, repo: RequestsRepo,
     replyMarkup=StandardButtonMenu(replyButtons)
     
     replyMessage = await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
-
-
-@user_messages_router.message(CommandStart)
-async def security_menu(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
-    #sending main menu
-    pass

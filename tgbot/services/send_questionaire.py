@@ -28,7 +28,7 @@ async def send_questionaire(
         for answerOptionItem in questionAnswers:
             answerOptionsList.append(answerOptionItem.answer)
 
-        question = await send_poll(bot,user_id,questionItem.question,answerOptionsList, repo)
+        poll = await send_poll(bot,user_id,questionItem.question,answerOptionsList, repo)
         
         
 
