@@ -23,11 +23,12 @@ async def register_poll_answer(poll_answer: PollAnswer, state: FSMContext, repo:
 
     #check that questionaire is complete
     if poll_answer.option_ids:
-        repo.results.updatePollResult(poll_answer.poll_id, poll_answer.option_ids[0])
+        await repo.results.updatePollResult(poll_answer.poll_id, poll_answer.option_ids[0])
     else:
-        repo.results.updatePollResult(poll_answer.poll_id)
+        await repo.results.updatePollResult(poll_answer.poll_id)
     
-
+    numberOfUncompleted = await repo.results.numberOfCompleted(poll_answer.user.id)
+    
 
     
   

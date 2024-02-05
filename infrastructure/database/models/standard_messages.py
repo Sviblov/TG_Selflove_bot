@@ -37,3 +37,4 @@ class standard_button(Base,TableNameMixin):
 
     def __repr__(self):
         return f"<StandardMessage {self.key} {self.language}>"
+    

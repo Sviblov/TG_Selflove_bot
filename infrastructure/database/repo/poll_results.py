@@ -3,6 +3,7 @@ from typing import Optional, Union
 
 
 from sqlalchemy import select, insert, update
+from sqlalchemy.sql.expression import func
 
 from infrastructure.database.models import sentPoll
 
@@ -39,7 +40,6 @@ class ResultsRepo(BaseRepo):
             self,
             poll_id: str,
             answer: int = None,
-
     ):
         update_request = update(sentPoll).where(
             sentPoll.poll_id==poll_id
@@ -47,6 +47,18 @@ class ResultsRepo(BaseRepo):
                 selected_answer=answer
                 )
         result = await self.session.execute(update_request)
+        
         await self.session.commit()
 
+    async def countToComplete(
+            self,
+            user_id: int,
+    ):
+        count_answered = select(func.count(sentPoll.selected_answer)).where(sentPoll.user_id==user_id)
+        count_all= select(func.count(sentPoll.user_id)).where(sentPoll.user_id==user_id)
         
+        result_answered = await self.session.execute(count_answered)
+        result_all= await self.session.execute(count_all)
+
+        
+        return result_all.scalar()-result_answered.scalar()

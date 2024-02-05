@@ -20,7 +20,7 @@ class DatabaseMiddleware(BaseMiddleware):
         
         async with self.session_pool() as session:
             repo = RequestsRepo(session)
-            print(type(event))
+           
             if type(event) in (Message, CallbackQuery):
                 user = await repo.users.get_or_create_user(
                     event.from_user.id,
@@ -29,7 +29,7 @@ class DatabaseMiddleware(BaseMiddleware):
                     event.from_user.username
                 )
                 data["user"] = user
-
+            
             #data["session"] = session
             data["repo"] = repo
             
