@@ -43,7 +43,9 @@ async def delete_messages(callback: CallbackQuery, state: FSMContext, repo: Requ
     for message in allMessages:
        
         await delete_message(bot, message[0],message[1])
+        
     
+    await repo.log_message.delete_messages(user.user_id)
     await state.set_state(None)
 
 @user_callbacks_router.callback_query(F.data=='welcome_2', StateFilter(UserStates.welcome_new_user_1))

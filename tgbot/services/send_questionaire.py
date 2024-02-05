@@ -4,6 +4,7 @@ from typing import Union, List
 
 from aiogram import Bot
 from aiogram import exceptions
+from aiogram.types import Poll
 
 from .services import send_poll
 from infrastructure.database.repo.requests import RequestsRepo
@@ -28,10 +29,10 @@ async def send_questionaire(
         for answerOptionItem in questionAnswers:
             answerOptionsList.append(answerOptionItem.answer)
 
-        poll = await send_poll(bot,user_id,questionItem.question,answerOptionsList, repo)
-        
-        
-
+        result = await send_poll(bot, user_id, questionItem.question, answerOptionsList, repo)
+        if result:
+            await repo.results.putSentQuestion(result.poll.id, result.message_id, questionItem.question_id, user_id)
+            
+    
 
     return True
-

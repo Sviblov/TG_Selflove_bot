@@ -90,14 +90,14 @@ async def delete_message(
     bot: Bot,
     chat_id: Union[int, str],
     message_id: Union[int,str],
-
+   
 ) -> bool:
 
     try:
         deleteMessage = await bot.delete_message(
             chat_id,message_id
         )
-      
+
     except exceptions.TelegramBadRequest as e:
         logging.error("Telegram server says - Bad Request: chat not found")
     except exceptions.TelegramForbiddenError:
@@ -137,6 +137,7 @@ async def send_poll(
     """
     try:
         replyQuestionaire = await bot.send_poll(user_id,question_text,answer_options,is_anonymous=False, allows_multiple_answers=False)
+        replyQuestionaire.poll.id
         if repo is not None:
             await repo.log_message.put_message(replyQuestionaire,  user_from=bot.id, user_to=user_id)
 
@@ -156,5 +157,5 @@ async def send_poll(
         logging.exception(f"Target [ID:{user_id}]: failed")
     else:
         logging.info(f"Poll sent [ID:{user_id}]: success")
-        return replyQuestionaire.message_id
+        return replyQuestionaire
     return False

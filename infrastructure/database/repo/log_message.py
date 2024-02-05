@@ -4,7 +4,7 @@ from typing import Optional
 
 
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 from infrastructure.database.models import message as logmessage
 
@@ -51,3 +51,15 @@ class logMessageRepo(BaseRepo):
         allMessages = await self.session.execute(select_data)
        
         return allMessages
+    
+    async def delete_messages(
+      self,
+      user_id: int      
+    ):
+        delete_data = delete(logmessage).where(
+                    (logmessage.user_from==user_id) | (logmessage.user_to==user_id)
+                    )
+        
+        
+        deleteMessages = await self.session.execute(delete_data)
+        await self.session.commit()
