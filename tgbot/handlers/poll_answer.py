@@ -27,7 +27,11 @@ async def register_poll_answer(poll_answer: PollAnswer, state: FSMContext, repo:
     else:
         await repo.results.updatePollResult(poll_answer.poll_id)
     
-    numberOfUncompleted = await repo.results.numberOfCompleted(poll_answer.user.id)
+    numberOfUncompleted = await repo.results.getUncompletedNumber(poll_answer.user.id)
+
+    if numberOfUncompleted==0:
+        await state.set_state(UserStates.completed_poll)
+        #Send Main Menu
     
 
     

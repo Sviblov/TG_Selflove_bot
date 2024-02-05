@@ -13,6 +13,7 @@ from infrastructure.database.repo.users import UserRepo
 
 logger = logging.getLogger('ResultRepo')
 
+
 class ResultsRepo(BaseRepo):
 
 
@@ -50,10 +51,12 @@ class ResultsRepo(BaseRepo):
         
         await self.session.commit()
 
-    async def countToComplete(
+    async def getUncompletedNumber(
             self,
             user_id: int,
     ):
+        
+        #TODO: improve this select in order not to query 2 times
         count_answered = select(func.count(sentPoll.selected_answer)).where(sentPoll.user_id==user_id)
         count_all= select(func.count(sentPoll.user_id)).where(sentPoll.user_id==user_id)
         

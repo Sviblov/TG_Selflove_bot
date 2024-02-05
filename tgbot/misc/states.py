@@ -7,4 +7,5 @@ class UserStates(StatesGroup):
     welcome_new_user_2 = State() #
     new_user = State()
     main_menu = State()
-   
+    completed_poll = State()
+    

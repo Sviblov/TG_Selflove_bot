@@ -42,8 +42,9 @@ async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bo
     
     replyText=await repo.interface.get_messageText('active_poll',user.language)
     
-    numberToComplete= await repo.results.countToComplete(message.from_user.id)
+    numberToComplete= await repo.results.getUncompletedNumber(message.from_user.id)
    
     replyTextFormated= replyText.format(numberToComplete)
 
     await send_message(bot, user.user_id, replyTextFormated, repo = repo)
+    

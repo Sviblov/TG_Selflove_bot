@@ -125,18 +125,9 @@ async def send_poll(
     answer_options: List[str],
     repo: RequestsRepo = None,
 ) -> bool:
-    """
-    Safe messages sender
 
-    :param bot: Bot instance.
-    :param user_id: user id. If str - must contain only digits.
-    :param text: text of the message.
-    :param disable_notification: disable notification or not.
-    :param reply_markup: reply markup.
-    :return: success.
-    """
     try:
-        replyQuestionaire = await bot.send_poll(user_id,question_text,answer_options,is_anonymous=False, allows_multiple_answers=False)
+        replyQuestionaire = await bot.send_poll(user_id,question_text,answer_options,is_anonymous=False, allows_multiple_answers=False )
         replyQuestionaire.poll.id
         if repo is not None:
             await repo.log_message.put_message(replyQuestionaire,  user_from=bot.id, user_to=user_id)
