@@ -55,6 +55,10 @@ class ResultsRepo(BaseRepo):
             self,
             user_id: int,
     ):
+        """
+        Get the number of questions that are not answered by the user
+        
+        """
         
         #TODO: improve this select in order not to query 2 times
         count_answered = select(func.count(sentPoll.selected_answer)).where(sentPoll.user_id==user_id)

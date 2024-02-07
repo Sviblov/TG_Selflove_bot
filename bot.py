@@ -17,6 +17,8 @@ from aiogram.methods.send_message import SendMessage
 from infrastructure.database.setup import create_engine
 from infrastructure.database.setup import create_session_pool
 
+from tgbot.handlers.poll_answer import poll_answer_router
+
 async def on_startup(bot: Bot, admin_ids: list[int]):
     await services.broadcast(bot, admin_ids, "Бот запущен")
 
@@ -110,6 +112,7 @@ async def main():
     
     dp.include_routers(*routers_list)
 
+    
     register_global_middlewares(dp, config, bot, session_pool)
 
     await on_startup(bot, config.tg_bot.admin_ids)
