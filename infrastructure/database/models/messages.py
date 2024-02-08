@@ -1,4 +1,4 @@
-
+from datetime import datetime
 from sqlalchemy import String
 from sqlalchemy import ForeignKey
 from sqlalchemy import text, BIGINT, FLOAT
@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.sql.functions import func
-import datetime
+
 from sqlalchemy.dialects.postgresql import TEXT
 
 from .base import Base

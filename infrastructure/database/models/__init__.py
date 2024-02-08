@@ -7,4 +7,4 @@ from .questions import question
 from .questions import answer_option
 from .messages import message
 from .supported_languages import supported_language
-from .sent_polls import sentPoll
+from .Polls import sentPoll, pollResults

@@ -2,10 +2,10 @@ import logging
 from typing import Optional, Union
 
 
-from sqlalchemy import select, insert, update
+from sqlalchemy import select, insert, update, and_
 from sqlalchemy.sql.expression import func
 
-from infrastructure.database.models import sentPoll
+from infrastructure.database.models import sentPoll, pollResults, answer_option
 
 from infrastructure.database.repo.base import BaseRepo
 from infrastructure.database.repo.users import UserRepo
@@ -69,3 +69,62 @@ class ResultsRepo(BaseRepo):
 
         
         return result_all.scalar()-result_answered.scalar()
+    
+    async def calculateTestResult(
+        self,
+        user_id: Union[int,str],
+    ):
+        """
+        Calculate the result of the poll
+        """
+        test_results=select(answer_option.weight).select_from(sentPoll, answer_option).join(
+            answer_option, 
+            and_(
+                sentPoll.question_id==answer_option.question_id, 
+                sentPoll.selected_answer==answer_option.answer_index),
+            isouter=True
+            ).where(sentPoll.user_id==user_id)
+        result = await self.session.execute(test_results)
+        result_scalar = result.scalars()
+
+        return sum(result_scalar)
+
+    async def saveTestResult(
+        self,
+        user_id: Union[int,str],
+        score: int,
+    ):
+        """
+        Save the result of the poll
+        """
+        update_request = update(pollResults).where(
+            pollResults.user_id==user_id
+            ).values(
+                is_valid=False
+                )
+        await self.session.execute(update_request)
+        await self.session.commit()
+
+        insert_result = insert(pollResults).values(
+            user_id=user_id,
+            is_valid=True,
+            score=score
+            ).returning(pollResults)
+        result = await self.session.execute(insert_result)
+        
+        await self.session.commit()
+        return result.scalars().first()
+    
+    async def getTestResult(
+        self,
+        user_id: Union[int,str],
+    ):
+        """
+        Save the result of the poll
+        """
+        test_results=select(pollResults).where(pollResults.user_id==user_id, pollResults.is_valid==True)
+        result = await self.session.execute(test_results)
+        result=result.scalars().first()
+        score=result.score/100
+
+        return score

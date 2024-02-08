@@ -18,7 +18,7 @@ admin_router.message.filter(AdminFilter())
 async def admin_start(message: Message,  state: FSMContext, repo: RequestsRepo, user: User):
 
     
-    replyText = [await repo.standardMessages.get_standardMessages('start_admin','en'), "userID:", str(message.from_user.id), user.language]
+    replyText = [await repo.interface.get_messageText('start_admin','en'), "userID:", str(message.from_user.id), user.language]
 
     
     

@@ -10,6 +10,7 @@ from infrastructure.database.repo.requests import RequestsRepo
 from infrastructure.database.models.users import User
 
 from ..services.services import send_message
+from ..services.send_main_menu import send_main_menu    
 
 from ..misc.states import UserStates
 
@@ -37,7 +38,7 @@ async def security_menu(message: Message, state: FSMContext, repo: RequestsRepo,
     
     replyMessage = await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
 
-@user_messages_router.message(CommandStart(),StateFilter(None,UserStates.active_poll))
+@user_messages_router.message(CommandStart(),StateFilter(UserStates.active_poll))
 async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     
     replyText=await repo.interface.get_messageText('active_poll',user.language)
@@ -47,4 +48,9 @@ async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bo
     replyTextFormated= replyText.format(numberToComplete)
 
     await send_message(bot, user.user_id, replyTextFormated, repo = repo)
+    
+@user_messages_router.message(CommandStart(),StateFilter(UserStates.main_menu))
+async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    
+   await send_main_menu(bot, user.user_id,user.language,repo)
     
