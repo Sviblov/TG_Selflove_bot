@@ -31,7 +31,7 @@ async def send_message(
             text,
             disable_notification=disable_notification,
             reply_markup=reply_markup,
-            format="html",
+            parse_mode="html",
         )
         if repo is not None:
             await repo.log_message.put_message(replyMessage,  user_from=bot.id, user_to=user_id)
