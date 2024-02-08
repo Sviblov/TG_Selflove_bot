@@ -8,7 +8,7 @@ from .services import send_message
 from infrastructure.database.repo.requests import RequestsRepo
 from infrastructure.database.models.questions import question, answer_option
 from ..misc.states import UserStates
-
+from tgbot.keyboards.inline import mainMenuButtons
 
 async def send_main_menu(
     bot: Bot,
@@ -21,8 +21,10 @@ async def send_main_menu(
 #    2) send question by question id
     replyText = await repo.interface.get_messageText('main_menu', language)
     user_score = await repo.results.getTestResult(user_id)
-    formattedText = replyText.format(user_score,3)
+    formattedText = replyText.format(user_score,10)
+    MainMenuButtons = await repo.interface.get_ButtonLables('main_menu', language)
+    mainMenuMarkup = mainMenuButtons(MainMenuButtons)
 
-    await send_message(bot, user_id, formattedText, repo = repo)
+    await send_message(bot, user_id, formattedText, reply_markup=mainMenuMarkup, repo = repo)
     
     return True

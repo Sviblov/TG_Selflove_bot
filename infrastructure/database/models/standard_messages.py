@@ -5,7 +5,7 @@ from sqlalchemy import text, BIGINT, Boolean, true
 from sqlalchemy.dialects.postgresql import TEXT
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-
+from aiogram.types import InlineKeyboardButton
 from .base import Base, TimestampMixin, TableNameMixin
 
 
@@ -38,3 +38,10 @@ class standard_button(Base,TableNameMixin):
     def __repr__(self):
         return f"<StandardMessage {self.key} {self.language}>"
     
+    def as_keyboard(self):
+        return {
+            f'{self.key}': InlineKeyboardButton(
+            text=self.button_text,
+            callback_data=self.callback_data
+            )
+            }

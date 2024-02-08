@@ -19,8 +19,16 @@ class InterfaceRepo(BaseRepo):
     async def getSupportedLanguage(
         self,
         language: str
-    )-> bool:
-        
+    ) -> str:
+        """
+        Retrieve the supported language from the database.
+
+        Args:
+            language (str): The language to check for support.
+
+        Returns:
+            str: The supported language.
+        """
         select_data = select(supported_language).where(supported_language.language==language)
         result = await self.session.execute(select_data)
         first_row = result.first()
@@ -32,7 +40,7 @@ class InterfaceRepo(BaseRepo):
             # first_row: supported_language=result.first()
             # return first_row.language
             
-            #In order not to overload DB:
+            # In order not to overload DB:
             return 'en'
         
 
@@ -73,13 +81,12 @@ class InterfaceRepo(BaseRepo):
     ):
         lang_to_use = await self.getSupportedLanguage(language)
         select_data = (
-            select(standard_button.button_text, standard_button.callback_data).where(
+            select(standard_button).where(
                 standard_button.menu_key==menu_key,
                 standard_button.language==lang_to_use
                 )
         )
         
         rows = await self.session.execute(select_data)
-
-        return rows
-
+        
+        return rows.scalars().all()
