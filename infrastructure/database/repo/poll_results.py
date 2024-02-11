@@ -51,6 +51,14 @@ class ResultsRepo(BaseRepo):
         
         await self.session.commit()
 
+    async def isPollAnswered(
+            self,
+            poll_id: str,
+            user_id: Union[int,str],
+    ):
+        pass
+    
+
     async def getUncompletedNumber(
             self,
             user_id: int,

@@ -10,7 +10,7 @@ from infrastructure.database.repo.requests import RequestsRepo
 from infrastructure.database.models.users import User
 
 from ..services.services import send_message, delete_message
-from ..services.send_questionaire import send_questionaire
+from ..services.send_questionaire import sendNextQuestion
 
 from ..misc.states import UserStates
 
@@ -24,9 +24,17 @@ user_callbacks_router = Router()
 async def start_test(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
 
-    await send_questionaire(bot, user.user_id,1,'en',repo)
+    await state.set_data({
+        'polls_left': await repo.questions.get_NumberOfQuestions(1,'en'),
+        'current_question': 1
+        })
 
     await state.set_state(UserStates.active_poll)
+
+    await sendNextQuestion(bot, user.user_id,1,'en',state, repo)
+
+
+
 
 @user_callbacks_router.callback_query(F.data=="start_test", StateFilter(UserStates.active_poll))
 async def notify_about_started_test(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
@@ -70,3 +78,14 @@ async def send_second_message(callback: CallbackQuery, state: FSMContext, repo: 
     replyMarkup=StandardButtonMenu(replyButtons)
     
     await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+
+@user_callbacks_router.callback_query(F.data=='security')
+async def send_second_message(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    replyText=await repo.interface.get_messageText('security_desc','en')
+    replyButtons= await repo.interface.get_ButtonLables('security_desc', 'en')
+    backButton = await repo.interface.get_ButtonLables('back_to_main', 'en')
+
+    replyMarkup=StandardButtonMenu(replyButtons+backButton)
+    
+    replyMessage = await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)

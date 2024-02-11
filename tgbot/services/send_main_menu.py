@@ -24,7 +24,7 @@ async def send_main_menu(
     formattedText = replyText.format(user_score,10)
     MainMenuButtons = await repo.interface.get_ButtonLables('main_menu', language)
     mainMenuMarkup = mainMenuButtons(MainMenuButtons)
-
+    
     await send_message(bot, user_id, formattedText, reply_markup=mainMenuMarkup, repo = repo)
     
     return True

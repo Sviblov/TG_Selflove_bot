@@ -21,6 +21,7 @@ class question(Base):
     language: Mapped[str] = mapped_column(String(10), server_default=text("'en'"))
     question: Mapped[str]  = mapped_column(TEXT)
     comment: Mapped[str]  = mapped_column(String(256))
+    order: Mapped[int]  = mapped_column(INT, nullable=True)
 
 
     def __repr__(self):
