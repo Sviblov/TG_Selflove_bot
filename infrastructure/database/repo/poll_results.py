@@ -133,6 +133,6 @@ class ResultsRepo(BaseRepo):
         test_results=select(pollResults).where(pollResults.user_id==user_id, pollResults.is_valid==True)
         result = await self.session.execute(test_results)
         result=result.scalars().first()
-        score=result.score/100
+        score=result.score
 
         return score

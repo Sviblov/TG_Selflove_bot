@@ -32,6 +32,8 @@ async def sendNextQuestion(
             
             if polls_left == 0:
                 await state.set_state(UserStates.main_menu)
+                results = await repo.results.calculateTestResult(user_id)
+                await repo.results.saveTestResult(user_id,results)
                 await send_main_menu(bot, user_id, language, repo)
                 await state.set_data(None)
             else:

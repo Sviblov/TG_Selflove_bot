@@ -21,7 +21,8 @@ async def send_main_menu(
 #    2) send question by question id
     replyText = await repo.interface.get_messageText('main_menu', language)
     user_score = await repo.results.getTestResult(user_id)
-    formattedText = replyText.format(user_score,10)
+    numberOfQuestions = await repo.questions.get_NumberOfQuestions(1,language)
+    formattedText = replyText.format(user_score,numberOfQuestions)
     MainMenuButtons = await repo.interface.get_ButtonLables('main_menu', language)
     mainMenuMarkup = mainMenuButtons(MainMenuButtons)
     

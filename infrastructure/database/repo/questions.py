@@ -37,7 +37,7 @@ class QuestionRepo(BaseRepo):
         self,
         questionaire_id: int,
         language: str,
-    ) -> List[question]:
+    ) -> int:
         
         # select_data = (
         #     select(standard_message.message).where(
