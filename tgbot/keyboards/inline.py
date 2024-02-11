@@ -19,18 +19,27 @@ def StandardButtonMenu(ButtonsData: List[standard_button]):
     return keyboard.as_markup()
 
 
-def mainMenuButtons(ButtonsData: List[standard_button], severity_status: int):
+def mainMenuButtons(ButtonsData: List[standard_button], severity_status: int, interventionStatus):
     keyboard = InlineKeyboardBuilder()
 
     button_dict={}
     for button in ButtonsData:
+
         button_as_dict = button.as_keyboard()
-   
+
         button_dict.update(button_as_dict)
+
+    for key, value in interventionStatus.items():
+        if value:
+            button_dict[key].text= button_dict[key].text+'🟢'
+        else:
+            button_dict[key].text= button_dict[key].text+'🔴'
+    
+
     if severity_status >0:
 
         keyboard.row(
-            button_dict['emodiary'],button_dict['video']
+            button_dict['emodiary'] ,button_dict['video']
         )
         keyboard.row(
             button_dict['dimegame'],button_dict['psysupport']

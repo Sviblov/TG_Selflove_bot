@@ -86,9 +86,9 @@ async def send_third_message(callback: CallbackQuery, state: FSMContext, repo: R
 @user_callbacks_router.callback_query(F.data=='security')
 async def send_security_description(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
-    replyText=await repo.interface.get_messageText('security_desc','en')
-    replyButtons= await repo.interface.get_ButtonLables('security_desc', 'en')
-    backButton = await repo.interface.get_ButtonLables('back_to_main', 'en')
+    replyText=await repo.interface.get_messageText('security_desc',user.language)
+    replyButtons= await repo.interface.get_ButtonLables('security_desc', user.language)
+    backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
 
     replyMarkup=StandardButtonMenu(replyButtons+backButton)
     
@@ -107,23 +107,35 @@ async def confirm_start_test_again(callback: CallbackQuery, state: FSMContext, r
     
     replyText=await repo.interface.get_messageText('start_test_again',user.language)
     replyButtons= await repo.interface.get_ButtonLables('welcome_new_3', user.language)
-    backButton = await repo.interface.get_ButtonLables('back_to_main', 'en')
+    backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
     replyMarkup=StandardButtonMenu(replyButtons+backButton)
     await state.set_state(UserStates.confirm_start_test)
     await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
 
 #, 'psysupport', 'interventionDesc'
-@user_callbacks_router.callback_query(F.data.in_({'psysupport','showvideo','interventionDesc'}), StateFilter(UserStates.main_menu))
+@user_callbacks_router.callback_query(F.data.in_({'psysupport','showvideo','interventionDesc','heros_journey'}), StateFilter(UserStates.main_menu))
 async def show_one_message(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
     if callback.data == 'showvideo':
         #send video lecture
         pass
         
-    
+   
     replyText=await repo.interface.get_messageText(callback.data,user.language)
-    backButton = await repo.interface.get_ButtonLables('back_to_main', 'en')
+    backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
     replyMarkup = StandardButtonMenu(backButton)
+    if callback.data == 'heros_journey':
+        replyButtons= await repo.interface.get_ButtonLables('herojourney_completed', user.language)
+        replyMarkup = StandardButtonMenu(replyButtons+backButton)
+
     await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
 
 
+@user_callbacks_router.callback_query(F.data=='herojourney_completed', StateFilter(UserStates.main_menu))
+async def show_one_message(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    await state.set_state(UserStates.main_menu)
+    state_data = await state.get_data()
+    state_data['interventionsStatus']['Herosjourney'] = True
+    await state.set_data(state_data)
+    await send_main_menu(bot, user.user_id, user.language, state, repo)

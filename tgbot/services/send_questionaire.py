@@ -47,9 +47,9 @@ async def sendNextQuestion(
                 data= {
                     'interventionsStatus': {
                         'emodiary': False,
-                        'DimeGame': False,
+                        'dimegame': False,
                         'Herosjourney': False,
-                        'NegThRef': False
+                        'Negativethoughts': False
                     }
                 }
                 await state.set_data(data)
