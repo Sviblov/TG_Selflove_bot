@@ -2,7 +2,7 @@ import logging
 from typing import Optional, Union
 
 
-from sqlalchemy import select, insert, update, and_
+from sqlalchemy import select, insert, update, and_, delete
 from sqlalchemy.sql.expression import func
 
 from infrastructure.database.models import sentPoll, pollResults, answer_option
@@ -136,3 +136,15 @@ class ResultsRepo(BaseRepo):
         score=result.score
 
         return score
+    
+    async def deleteLastSentPolls(
+        self,
+        user_id: Union[int,str],
+    ):
+        """
+        Save the result of the poll
+        """
+        test_results=delete(sentPoll).where(sentPoll.user_id==user_id)
+        result = await self.session.execute(test_results)
+        result=await self.session.commit()
+        

@@ -34,8 +34,19 @@ async def sendNextQuestion(
                 await state.set_state(UserStates.main_menu)
                 results = await repo.results.calculateTestResult(user_id)
                 await repo.results.saveTestResult(user_id,results)
-                await send_main_menu(bot, user_id, language, repo)
-                await state.set_data(None)
+
+                data= {
+                    'interventionsStatus': {
+                        'emodiary': False,
+                        'DimeGame': False,
+                        'Herosjourney': False,
+                        'NegThRef': False
+                    }
+                }
+                await state.set_data(data)
+
+                await send_main_menu(bot, user_id, language, state, repo)
+          
             else:
                 nextQuestion: question = await repo.questions.get_Question(questionaire_id, current_question ,language)   
                 questionAnswers: List[answer_option] = await repo.questions.get_Answers(nextQuestion.question_id,language)

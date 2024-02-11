@@ -9,23 +9,31 @@ from infrastructure.database.repo.requests import RequestsRepo
 from infrastructure.database.models.questions import question, answer_option
 from ..misc.states import UserStates
 from tgbot.keyboards.inline import mainMenuButtons
+from aiogram.fsm.context import FSMContext
 
 async def send_main_menu(
     bot: Bot,
     user_id: Union[int, str],
     language: str,
+    state: FSMContext,
     repo: RequestsRepo = None,
 ) -> bool:
    
 #    1) select questiond by questionaire_id
 #    2) send question by question id
-    replyText = await repo.interface.get_messageText('main_menu', language)
+    
+    lang_to_use = await repo.users.supported_language(language)
+    stateData = await state.get_data()
+    interventionStatus= stateData['interventionsStatus']
+    
+
+    replyText = await repo.interface.get_messageText('main_menu', lang_to_use)
     user_score = await repo.results.getTestResult(user_id)
-    numberOfQuestions = await repo.questions.get_NumberOfQuestions(1,language)
-    formattedText = replyText.format(user_score,numberOfQuestions)
-    MainMenuButtons = await repo.interface.get_ButtonLables('main_menu', language)
+    numberOfQuestions = await repo.questions.get_NumberOfQuestions(1,lang_to_use)
+
+    formattedText = replyText.format(user_score,numberOfQuestions*4)
+    MainMenuButtons = await repo.interface.get_ButtonLables('main_menu', lang_to_use)
     mainMenuMarkup = mainMenuButtons(MainMenuButtons)
     
     await send_message(bot, user_id, formattedText, reply_markup=mainMenuMarkup, repo = repo)
     
-    return True

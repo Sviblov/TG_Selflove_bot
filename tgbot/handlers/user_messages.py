@@ -42,15 +42,14 @@ async def security_menu(message: Message, state: FSMContext, repo: RequestsRepo,
 async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     
     replyText=await repo.interface.get_messageText('active_poll',user.language)
-    
     numberToComplete= await repo.results.getUncompletedNumber(message.from_user.id)
-   
     replyTextFormated= replyText.format(numberToComplete)
 
     await send_message(bot, user.user_id, replyTextFormated, repo = repo)
     
 @user_messages_router.message(CommandStart(),StateFilter(UserStates.main_menu))
-async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+async def main_menu(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     
-   await send_main_menu(bot, user.user_id,user.language,repo)
+ 
+   await send_main_menu(bot, user.user_id, user.language, state, repo)
     

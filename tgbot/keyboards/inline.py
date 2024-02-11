@@ -35,10 +35,13 @@ def mainMenuButtons(ButtonsData: List[standard_button]):
         button_dict['dimegame'],button_dict['psysupport']
     )
     keyboard.row(
-        button_dict['Herosjourney'],button_dict['security']
+        button_dict['Herosjourney'],button_dict['interventionDesc']
     )
     keyboard.row(
         button_dict['Negativethoughts'],button_dict['start_test']
+    )
+    keyboard.row(
+        button_dict['security']
     )
 
 

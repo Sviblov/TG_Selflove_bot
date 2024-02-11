@@ -7,5 +7,8 @@ class UserStates(StatesGroup):
     welcome_new_user_2 = State() #
     new_user = State()
     main_menu = State()
+    hero_journey = State()
+    confirm_start_test = State()
+    
 
     

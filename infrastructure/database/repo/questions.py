@@ -39,14 +39,9 @@ class QuestionRepo(BaseRepo):
         language: str,
     ) -> int:
         
-        # select_data = (
-        #     select(standard_message.message).where(
-        #         standard_message.key==key,
-        #         standard_message.language==language
-        #         )
-        # )
-
-        select_data = select(func.count(1)).where(question.questionaire_id==questionaire_id, question.language==language)
+   
+        
+        select_data = select(func.count(question.order)).where(question.questionaire_id==questionaire_id, question.language==language)
 
         questions = await self.session.execute(select_data)
 
