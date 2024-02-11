@@ -31,6 +31,7 @@ class pollResults(Base):
     poll_id: Mapped[int] = mapped_column(INT,primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
     score: Mapped[int] = mapped_column(INT)
+    severity_status: Mapped[int] = mapped_column(INT, nullable=True)
     is_valid: Mapped[bool] = mapped_column(BOOLEAN)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
     

@@ -25,15 +25,17 @@ async def send_main_menu(
     lang_to_use = await repo.users.supported_language(language)
     stateData = await state.get_data()
     interventionStatus= stateData['interventionsStatus']
-    
+    severity_status = await repo.results.getSeverityStatus(user_id)
 
-    replyText = await repo.interface.get_messageText('main_menu', lang_to_use)
+
+
+    replyText = await repo.interface.get_messageText(f'main_menu_{severity_status}', lang_to_use)
     user_score = await repo.results.getTestResult(user_id)
     numberOfQuestions = await repo.questions.get_NumberOfQuestions(1,lang_to_use)
-
+    
     formattedText = replyText.format(user_score,numberOfQuestions*4)
     MainMenuButtons = await repo.interface.get_ButtonLables('main_menu', lang_to_use)
-    mainMenuMarkup = mainMenuButtons(MainMenuButtons)
+    mainMenuMarkup = mainMenuButtons(MainMenuButtons, severity_status)
     
     await send_message(bot, user_id, formattedText, reply_markup=mainMenuMarkup, repo = repo)
     

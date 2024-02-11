@@ -101,6 +101,7 @@ class ResultsRepo(BaseRepo):
         self,
         user_id: Union[int,str],
         score: int,
+        severity: int=0,
     ):
         """
         Save the result of the poll
@@ -116,7 +117,8 @@ class ResultsRepo(BaseRepo):
         insert_result = insert(pollResults).values(
             user_id=user_id,
             is_valid=True,
-            score=score
+            score=score,
+            severity_status=severity
             ).returning(pollResults)
         result = await self.session.execute(insert_result)
         
@@ -136,7 +138,20 @@ class ResultsRepo(BaseRepo):
         score=result.score
 
         return score
-    
+        
+    async def getSeverityStatus(
+        self,
+        user_id: Union[int,str],
+    ):
+        """
+        Save the result of the poll
+        """
+        test_results=select(pollResults).where(pollResults.user_id==user_id, pollResults.is_valid==True)
+        result = await self.session.execute(test_results)
+        result=result.scalars().first()
+        severityStatus=result.severity_status
+
+        return severityStatus
     async def deleteLastSentPolls(
         self,
         user_id: Union[int,str],

@@ -33,7 +33,16 @@ async def sendNextQuestion(
             if polls_left == 0:
                 await state.set_state(UserStates.main_menu)
                 results = await repo.results.calculateTestResult(user_id)
-                await repo.results.saveTestResult(user_id,results)
+                numberOfQuestions = await repo.questions.get_NumberOfQuestions(questionaire_id,language)
+                if results<numberOfQuestions*4*0.65:
+                    severity_status = 0;
+                elif results<numberOfQuestions*4*0.84:
+                    severity_status = 1;
+                else:
+                    severity_status = 2;
+              
+                
+                await repo.results.saveTestResult(user_id,results, severity_status)
 
                 data= {
                     'interventionsStatus': {

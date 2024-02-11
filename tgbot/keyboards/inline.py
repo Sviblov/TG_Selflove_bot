@@ -19,7 +19,7 @@ def StandardButtonMenu(ButtonsData: List[standard_button]):
     return keyboard.as_markup()
 
 
-def mainMenuButtons(ButtonsData: List[standard_button]):
+def mainMenuButtons(ButtonsData: List[standard_button], severity_status: int):
     keyboard = InlineKeyboardBuilder()
 
     button_dict={}
@@ -27,22 +27,39 @@ def mainMenuButtons(ButtonsData: List[standard_button]):
         button_as_dict = button.as_keyboard()
    
         button_dict.update(button_as_dict)
+    if severity_status >0:
 
-    keyboard.row(
-        button_dict['emodiary'],button_dict['video']
-    )
-    keyboard.row(
-        button_dict['dimegame'],button_dict['psysupport']
-    )
-    keyboard.row(
-        button_dict['Herosjourney'],button_dict['interventionDesc']
-    )
-    keyboard.row(
-        button_dict['Negativethoughts'],button_dict['start_test']
-    )
-    keyboard.row(
-        button_dict['security']
-    )
+        keyboard.row(
+            button_dict['emodiary'],button_dict['video']
+        )
+        keyboard.row(
+            button_dict['dimegame'],button_dict['psysupport']
+        )
+        keyboard.row(
+            button_dict['Herosjourney'],button_dict['interventionDesc']
+        )
+        keyboard.row(
+            button_dict['Negativethoughts'],button_dict['start_test']
+        )
+        keyboard.row(
+            button_dict['security']
+        )
+    else:
+        keyboard.row(
+            button_dict['video']
+        )
+        keyboard.row(
+            button_dict['psysupport']
+        )
+        keyboard.row(
+            button_dict['interventionDesc']
+        )
+        keyboard.row(
+            button_dict['start_test']
+        )
+        keyboard.row(
+            button_dict['security']
+        )
 
 
     return keyboard.as_markup()
