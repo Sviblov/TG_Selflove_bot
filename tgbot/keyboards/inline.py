@@ -4,7 +4,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 from aiogram.utils.keyboard import ButtonType
 from infrastructure.database.models import standard_button
 from typing import List
-
+from aiogram.types.web_app_info import WebAppInfo
 
 def StandardButtonMenu(ButtonsData: List[standard_button]):
 
@@ -16,6 +16,28 @@ def StandardButtonMenu(ButtonsData: List[standard_button]):
             )
         keyboard.row(newbutton)
 
+    return keyboard.as_markup()
+
+def dimeGameMarkup(dimeGameButton, backButton):
+    keyboard = InlineKeyboardBuilder()
+    
+    for button in dimeGameButton:
+        webappUrl = button.comment
+        webapp = WebAppInfo(url=webappUrl)
+        newbutton = InlineKeyboardButton(
+            text=button.button_text,
+            # callback_data=button.callback_data,
+            web_app=webapp
+            )
+        keyboard.row(newbutton)
+  
+    
+    for button in backButton:
+        newbutton = InlineKeyboardButton(
+            text=button.button_text,
+            callback_data=button.callback_data
+            )
+        keyboard.row(newbutton)
     return keyboard.as_markup()
 
 

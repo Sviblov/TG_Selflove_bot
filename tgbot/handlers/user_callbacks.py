@@ -14,7 +14,7 @@ from ..services.send_questionaire import sendNextQuestion, send_main_menu
 
 from ..misc.states import UserStates
 
-from ..keyboards.inline import StandardButtonMenu
+from ..keyboards.inline import StandardButtonMenu,dimeGameMarkup
 from infrastructure.database.models import message as logmessage
 
 user_callbacks_router = Router()
@@ -120,7 +120,6 @@ async def show_one_message(callback: CallbackQuery, state: FSMContext, repo: Req
         #send video lecture
         pass
         
-   
     replyText=await repo.interface.get_messageText(callback.data,user.language)
     backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
     replyMarkup = StandardButtonMenu(backButton)
@@ -139,3 +138,18 @@ async def show_one_message(callback: CallbackQuery, state: FSMContext, repo: Req
     state_data['interventionsStatus']['Herosjourney'] = True
     await state.set_data(state_data)
     await send_main_menu(bot, user.user_id, user.language, state, repo)
+
+
+@user_callbacks_router.callback_query(F.data.in_({'dimegame'}), StateFilter(UserStates.main_menu))
+async def start_dime_game(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    
+    
+    replyText=await repo.interface.get_messageText(callback.data,user.language)
+
+    backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
+    dimegameButton = await repo.interface.get_ButtonLables('start_dimegame', user.language)
+    
+    replyMarkup = dimeGameMarkup(dimegameButton,backButton)
+    
+    await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
