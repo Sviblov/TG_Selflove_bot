@@ -22,6 +22,24 @@ user_messages_router = Router()
 @user_messages_router.message(CommandStart(),StateFilter(None,UserStates.welcome_new_user_1))
 async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     
+    data= {
+        'interventionsStatus': {
+            'emodiary': {
+                'status': False
+            },
+        'dimegame': {
+                'status':False
+            },
+        'Herosjourney': {
+                'status':False
+            },
+        'Negativethoughts': {
+                'status':False
+            },
+        }
+    }
+    await state.set_data(data)
+
     replyText=await repo.interface.get_messageText('welcome_new_1',user.language)
     replyButtons= await repo.interface.get_ButtonLables('welcome_new_1', user.language)
     replyMarkup=StandardButtonMenu(replyButtons)

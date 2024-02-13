@@ -18,12 +18,16 @@ def StandardButtonMenu(ButtonsData: List[standard_button]):
 
     return keyboard.as_markup()
 
-def dimeGameMarkup(dimeGameButton, backButton):
+def dimeGameMarkup(dimeGameButton, otherButtons):
     keyboard = InlineKeyboardBuilder()
     
     for button in dimeGameButton:
         webappUrl = button.comment
-        webapp = WebAppInfo(url=webappUrl)
+        webapp = WebAppInfo(
+            url=webappUrl,
+
+            )
+        
         newbutton = InlineKeyboardButton(
             text=button.button_text,
             # callback_data=button.callback_data,
@@ -32,7 +36,7 @@ def dimeGameMarkup(dimeGameButton, backButton):
         keyboard.row(newbutton)
   
     
-    for button in backButton:
+    for button in otherButtons:
         newbutton = InlineKeyboardButton(
             text=button.button_text,
             callback_data=button.callback_data
@@ -52,7 +56,7 @@ def mainMenuButtons(ButtonsData: List[standard_button], severity_status: int, in
         button_dict.update(button_as_dict)
 
     for key, value in interventionStatus.items():
-        if value:
+        if value['status']:
             button_dict[key].text= button_dict[key].text+'🟢'
         else:
             button_dict[key].text= button_dict[key].text+'🔴'

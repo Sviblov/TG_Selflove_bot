@@ -27,12 +27,11 @@ async def start_test(callback: CallbackQuery, state: FSMContext, repo: RequestsR
         # delete last test results
         await repo.results.deleteLastSentPolls(user.user_id)
 
-
-    await state.set_data({
-        'polls_left': await repo.questions.get_NumberOfQuestions(1,'en'),
-        'current_question': 1
-        })
-    
+    state_data = await state.get_data()
+    state_data['polls_left']=await repo.questions.get_NumberOfQuestions(1,'en')
+    state_data['current_question']=1
+  
+    await state.set_data(state_data)
     await state.set_state(UserStates.active_poll)
 
     await sendNextQuestion(bot, user.user_id,1,'en',state, repo)
@@ -51,13 +50,32 @@ async def notify_about_started_test(callback: CallbackQuery, state: FSMContext, 
 async def delete_messages(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
     allMessages = await repo.log_message.get_messages(user.user_id)
-  
+    
     for message in allMessages:
        
         await delete_message(bot, message[0],message[1])
         
     
     await repo.log_message.delete_messages(user.user_id)
+
+    data= {
+        'interventionsStatus': {
+            'emodiary': {
+                'status':False
+            },
+        'dimegame': {
+                'status':False
+            },
+        'Herosjourney': {
+                'status':False
+            },
+        'Negativethoughts': {
+                'status':False
+            },
+        }
+    }
+    await state.set_data(data)
+
     await state.set_state(None)
 
 @user_callbacks_router.callback_query(F.data=='welcome_2', StateFilter(UserStates.welcome_new_user_1))
@@ -112,7 +130,7 @@ async def confirm_start_test_again(callback: CallbackQuery, state: FSMContext, r
     await state.set_state(UserStates.confirm_start_test)
     await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
 
-#, 'psysupport', 'interventionDesc'
+
 @user_callbacks_router.callback_query(F.data.in_({'psysupport','showvideo','interventionDesc','heros_journey'}), StateFilter(UserStates.main_menu))
 async def show_one_message(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
@@ -131,25 +149,70 @@ async def show_one_message(callback: CallbackQuery, state: FSMContext, repo: Req
 
 
 @user_callbacks_router.callback_query(F.data=='herojourney_completed', StateFilter(UserStates.main_menu))
-async def show_one_message(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+async def show_herojourney_completed(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
     await state.set_state(UserStates.main_menu)
     state_data = await state.get_data()
-    state_data['interventionsStatus']['Herosjourney'] = True
+    state_data['interventionsStatus']['Herosjourney']['status'] = True
     await state.set_data(state_data)
     await send_main_menu(bot, user.user_id, user.language, state, repo)
 
 
+@user_callbacks_router.callback_query(F.data.in_({'dimegame_completed'}), StateFilter(UserStates.main_menu))
+async def start_dime_game(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    await state.set_state(UserStates.main_menu)
+    state_data = await state.get_data()
+    state_data['interventionsStatus']['dimegame']['status'] = True
+    await state.set_data(state_data)
+    await send_main_menu(bot, user.user_id, user.language, state, repo)
+   
+    
+    
+
 @user_callbacks_router.callback_query(F.data.in_({'dimegame'}), StateFilter(UserStates.main_menu))
 async def start_dime_game(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
-    
+
     
     replyText=await repo.interface.get_messageText(callback.data,user.language)
-
+    replyButtons= await repo.interface.get_ButtonLables('dimegame_completed', user.language)
     backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
     dimegameButton = await repo.interface.get_ButtonLables('start_dimegame', user.language)
     
-    replyMarkup = dimeGameMarkup(dimegameButton,backButton)
+    replyMarkup = dimeGameMarkup(dimegameButton,replyButtons+backButton)
     
     await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+
+
+@user_callbacks_router.callback_query(F.data.in_({'emodiary'}), StateFilter(UserStates.main_menu))
+async def show_emodiary(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    
+
+    state_data = await state.get_data()
+    emoDiaryStatus = state_data['interventionsStatus']['emodiary']['status']
+
+    if emoDiaryStatus:
+        replyText=await repo.interface.get_messageText('emodiary_setup_true',user.language)
+        replyButtons= await repo.interface.get_ButtonLables('emodiary_setup_true', user.language)
+        backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
+        replyMarkup = StandardButtonMenu(replyButtons+backButton)
+        await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+
+    else:
+        replyText=await repo.interface.get_messageText('emodiary_setup_false',user.language)
+        replyButtons= await repo.interface.get_ButtonLables('emodiary_setup_false', user.language)
+        backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
+        replyMarkup = StandardButtonMenu(replyButtons+backButton)
+        await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+
+@user_callbacks_router.callback_query(F.data=='emodiary_setup', StateFilter(UserStates.main_menu))
+async def show_emodiary_setup(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    
+    state_data = await state.get_data()
+    emoDiaryStatus = state_data['interventionsStatus']['emodiary']['status']
+
+    #ask
+

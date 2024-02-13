@@ -44,15 +44,6 @@ async def sendNextQuestion(
                 
                 await repo.results.saveTestResult(user_id,results, severity_status)
 
-                data= {
-                    'interventionsStatus': {
-                        'emodiary': False,
-                        'dimegame': False,
-                        'Herosjourney': False,
-                        'Negativethoughts': False
-                    }
-                }
-                await state.set_data(data)
 
                 await send_main_menu(bot, user_id, language, state, repo)
           
@@ -66,11 +57,11 @@ async def sendNextQuestion(
                 result = await send_poll(bot, user_id, nextQuestion.question, answerOptionsList, repo)
                 if result:
                     await repo.results.putSentQuestion(result.poll.id, result.message_id, nextQuestion.question_id, user_id)
-       
-                await state.set_data({
-                    'polls_left': polls_left-1,
-                    'current_question': current_question+1
-                    })
+                state_data = await state.get_data()
+                state_data['polls_left']=polls_left-1
+                state_data['current_question']=current_question+1
+
+                await state.set_data(state_data)
                 
             
                
