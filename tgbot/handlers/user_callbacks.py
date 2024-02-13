@@ -135,8 +135,8 @@ async def confirm_start_test_again(callback: CallbackQuery, state: FSMContext, r
 async def show_one_message(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
     if callback.data == 'showvideo':
-        #send video lecture
-        pass
+        videoLink=await repo.interface.get_messageText('video_link',user.language)
+        await send_message(bot, user.user_id, videoLink, repo = repo,disable_web_page_preview=False)
         
     replyText=await repo.interface.get_messageText(callback.data,user.language)
     backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
@@ -159,7 +159,7 @@ async def show_herojourney_completed(callback: CallbackQuery, state: FSMContext,
 
 
 @user_callbacks_router.callback_query(F.data.in_({'dimegame_completed'}), StateFilter(UserStates.main_menu))
-async def start_dime_game(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+async def dime_game_completed(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
     await state.set_state(UserStates.main_menu)
     state_data = await state.get_data()
@@ -229,7 +229,7 @@ async def show_emodiary_setup(callback: CallbackQuery, state: FSMContext, repo: 
     await callback.message.edit_text(replyText, reply_markup=replyMarkup) 
 
 @user_callbacks_router.callback_query(F.data.contains('emodiary_notif'), StateFilter(UserStates.main_menu))
-async def show_emodiary_setup(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+async def show_emodiary_setup_step_1(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
 
     numberOfNotification = int(callback.data[-1])
@@ -249,7 +249,7 @@ async def show_emodiary_setup(callback: CallbackQuery, state: FSMContext, repo: 
     await callback.message.edit_text(replyText, reply_markup=replyMarkup)
     
 @user_callbacks_router.callback_query(F.data.contains('utc_'), StateFilter(UserStates.main_menu))
-async def show_emodiary_setup(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+async def show_emodiary_setup_step_2(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
 
     stateData = await state.get_data()
