@@ -14,7 +14,7 @@ from ..services.send_questionaire import sendNextQuestion, send_main_menu
 
 from ..misc.states import UserStates
 
-from ..keyboards.inline import StandardButtonMenu,dimeGameMarkup
+from ..keyboards.inline import StandardButtonMenu,dimeGameMarkup, EmoDiarySetupMarkup   
 from infrastructure.database.models import message as logmessage
 
 user_callbacks_router = Router()
@@ -144,7 +144,7 @@ async def show_one_message(callback: CallbackQuery, state: FSMContext, repo: Req
     if callback.data == 'heros_journey':
         replyButtons= await repo.interface.get_ButtonLables('herojourney_completed', user.language)
         replyMarkup = StandardButtonMenu(replyButtons+backButton)
-
+    
     await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
 
 
@@ -207,12 +207,31 @@ async def show_emodiary(callback: CallbackQuery, state: FSMContext, repo: Reques
         replyMarkup = StandardButtonMenu(replyButtons+backButton)
         await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
 
-@user_callbacks_router.callback_query(F.data=='emodiary_setup', StateFilter(UserStates.main_menu))
+@user_callbacks_router.callback_query(F.data=='emodiary_setup_step_1', StateFilter(UserStates.main_menu))
 async def show_emodiary_setup(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
+
+
+    replyButtons= await repo.interface.get_ButtonLables(callback.data, user.language)
+    backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
+    replyMarkup = EmoDiarySetupMarkup(replyButtons,backButton,1)
+    replyText=await repo.interface.get_messageText(callback.data,user.language)
+  
+
+    await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+
+@user_callbacks_router.callback_query(F.data.contains('emodiary_notif'), StateFilter(UserStates.main_menu))
+async def show_emodiary_setup(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+
+    numberOfNotification = int(callback.data[-1])
+
+    replyButtons= await repo.interface.get_ButtonLables(callback.data, user.language)
+    backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
+    replyMarkup = EmoDiarySetupMarkup(replyButtons,backButton,2)
+    replyText=await repo.interface.get_messageText('emodiary_setup_step_2',user.language)
     
-    state_data = await state.get_data()
-    emoDiaryStatus = state_data['interventionsStatus']['emodiary']['status']
-
-    #ask
-
+    stateData = await state.get_data()
+    stateData['interventionsStatus']['emodiary']['no_of_notifications'] = numberOfNotification
+    await state.set_data(stateData)
+    await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)

@@ -46,6 +46,7 @@ def dimeGameMarkup(dimeGameButton, otherButtons):
 
 
 def mainMenuButtons(ButtonsData: List[standard_button], severity_status: int, interventionStatus):
+
     keyboard = InlineKeyboardBuilder()
 
     button_dict={}
@@ -96,5 +97,32 @@ def mainMenuButtons(ButtonsData: List[standard_button], severity_status: int, in
             button_dict['security']
         )
 
+
+    return keyboard.as_markup()
+
+
+def EmoDiarySetupMarkup(ButtonsData: List[standard_button], back_button: standard_button, step: int):
+    keyboard = InlineKeyboardBuilder()
+    if step == 1:
+       for button in ButtonsData:
+            
+            newbutton = InlineKeyboardButton(
+                text=button.button_text,
+                callback_data=button.callback_data
+                )
+            if 'Notify' in button.button_text:
+                keyboard.row(newbutton)
+            else:
+                keyboard.add(newbutton)
+    else:
+        pass
+
+
+    for button in back_button:
+        newbutton = InlineKeyboardButton(
+            text=button.button_text,
+            callback_data=button.callback_data
+            )
+        keyboard.row(newbutton)
 
     return keyboard.as_markup()
