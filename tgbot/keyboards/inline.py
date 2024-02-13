@@ -5,7 +5,7 @@ from aiogram.utils.keyboard import ButtonType
 from infrastructure.database.models import standard_button
 from typing import List
 from aiogram.types.web_app_info import WebAppInfo
-from datetime import datetime
+from datetime import datetime,timedelta
 
 def StandardButtonMenu(ButtonsData: List[standard_button]):
 
@@ -102,7 +102,7 @@ def mainMenuButtons(ButtonsData: List[standard_button], severity_status: int, in
     return keyboard.as_markup()
 
 
-def EmoDiarySetupMarkup(ButtonsData: List[standard_button], back_button: standard_button, step: int):
+def EmoDiarySetupMarkup(ButtonsData: List[standard_button], back_button: standard_button, step: int, delta: int=None):
     keyboard = InlineKeyboardBuilder()
     if step == 1:
        for button in ButtonsData:
@@ -115,25 +115,49 @@ def EmoDiarySetupMarkup(ButtonsData: List[standard_button], back_button: standar
                 keyboard.row(newbutton)
             else:
                 keyboard.add(newbutton)
-    else:
+    elif step == 2:
 
         for button in ButtonsData:
             text=button.button_text,
             callback_data=button.callback_data
             text=text[0]
-            current_time = datetime.now().time()
-            for i in range(-8,11):
-                text=text.format(i,i+1)
-                callback_data=callback_data.format(i)
-                newbutton = InlineKeyboardButton(
-                    text=text,
-                    callback_data=callback_data
-                    )
+            current_time = datetime.now()
+
+            for i in range(-12,12):
+                adjusted_time = current_time + timedelta(hours=i)
+                adjusted_time_text = adjusted_time.strftime('%H:%M')
+                if(i>=0):
+                    
+                    newbutton = InlineKeyboardButton(
+                        text=text.format(adjusted_time_text,'+'+str(i)),
+                        callback_data=callback_data.format(i)
+                        )
+                else:
+                    newbutton = InlineKeyboardButton(
+                        text=text.format(adjusted_time_text,i),
+                        callback_data=callback_data.format(i)
+                        )
                 if i%2==0:
                     keyboard.row(newbutton)
                 else:
                     keyboard.add(newbutton)
-            
+
+    else:
+        for button in ButtonsData:
+            text=button.button_text,
+            callback_data=button.callback_data
+            text=text[0]
+            for i in range(0,23):
+                adjusted_time = str(i)+':00'
+                
+                newbutton = InlineKeyboardButton(
+                        text=adjusted_time,
+                        callback_data=callback_data.format(delta,adjusted_time)
+                        )
+                if i%3==0:
+                    keyboard.row(newbutton)
+                else:
+                    keyboard.add(newbutton)
 
 
     for button in back_button:
