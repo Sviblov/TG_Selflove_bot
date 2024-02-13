@@ -5,6 +5,7 @@ from aiogram.utils.keyboard import ButtonType
 from infrastructure.database.models import standard_button
 from typing import List
 from aiogram.types.web_app_info import WebAppInfo
+from datetime import datetime
 
 def StandardButtonMenu(ButtonsData: List[standard_button]):
 
@@ -115,7 +116,24 @@ def EmoDiarySetupMarkup(ButtonsData: List[standard_button], back_button: standar
             else:
                 keyboard.add(newbutton)
     else:
-        pass
+
+        for button in ButtonsData:
+            text=button.button_text,
+            callback_data=button.callback_data
+            text=text[0]
+            current_time = datetime.now().time()
+            for i in range(-8,11):
+                text=text.format(i,i+1)
+                callback_data=callback_data.format(i)
+                newbutton = InlineKeyboardButton(
+                    text=text,
+                    callback_data=callback_data
+                    )
+                if i%2==0:
+                    keyboard.row(newbutton)
+                else:
+                    keyboard.add(newbutton)
+            
 
 
     for button in back_button:

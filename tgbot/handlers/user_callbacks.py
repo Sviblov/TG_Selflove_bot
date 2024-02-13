@@ -218,7 +218,7 @@ async def show_emodiary_setup(callback: CallbackQuery, state: FSMContext, repo: 
     replyText=await repo.interface.get_messageText(callback.data,user.language)
   
 
-    await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+    await callback.message.edit_text(replyText, reply_markup=replyMarkup) 
 
 @user_callbacks_router.callback_query(F.data.contains('emodiary_notif'), StateFilter(UserStates.main_menu))
 async def show_emodiary_setup(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
@@ -226,12 +226,14 @@ async def show_emodiary_setup(callback: CallbackQuery, state: FSMContext, repo: 
 
     numberOfNotification = int(callback.data[-1])
 
-    replyButtons= await repo.interface.get_ButtonLables(callback.data, user.language)
+    replyButtons = await repo.interface.get_ButtonLables('emodiary_setup_step_2', user.language)
     backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
     replyMarkup = EmoDiarySetupMarkup(replyButtons,backButton,2)
-    replyText=await repo.interface.get_messageText('emodiary_setup_step_2',user.language)
+    replyText = await repo.interface.get_messageText('emodiary_setup_step_2',user.language)
     
     stateData = await state.get_data()
     stateData['interventionsStatus']['emodiary']['no_of_notifications'] = numberOfNotification
     await state.set_data(stateData)
-    await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+
+    await callback.message.edit_text(replyText, reply_markup=replyMarkup)
+    
