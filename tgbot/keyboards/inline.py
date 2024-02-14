@@ -170,7 +170,7 @@ def EmoDiarySetupMarkup(ButtonsData: List[standard_button], back_button: standar
     return keyboard.as_markup()
 
 
-def EmoDiarySetupMarkup(ButtonsData: List[standard_button]):
+def EmoDiarySetupTrue(ButtonsData: List[standard_button]):
     keyboard = InlineKeyboardBuilder()
 
     

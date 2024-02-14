@@ -38,7 +38,7 @@ def register_global_middlewares(dp: Dispatcher, config: Config, bot: Bot, sessio
         ConfigMiddleware(config, bot),
         DatabaseMiddleware(session_pool, bot)
     ]
-
+X
     for middleware_type in middleware_types:
         dp.message.outer_middleware(middleware_type)
         dp.callback_query.outer_middleware(middleware_type)
