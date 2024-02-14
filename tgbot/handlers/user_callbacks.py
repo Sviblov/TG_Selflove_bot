@@ -14,7 +14,7 @@ from ..services.send_questionaire import sendNextQuestion, send_main_menu
 
 from ..misc.states import UserStates
 
-from ..keyboards.inline import StandardButtonMenu,dimeGameMarkup, EmoDiarySetupMarkup   
+from ..keyboards.inline import StandardButtonMenu,dimeGameMarkup, EmoDiarySetupMarkup,EmoDiarySetupMarkup
 from infrastructure.database.models import message as logmessage
 
 user_callbacks_router = Router()
@@ -205,7 +205,7 @@ async def show_emodiary(callback: CallbackQuery, state: FSMContext, repo: Reques
 
         replyButtons= await repo.interface.get_ButtonLables('emodiary_setup_true', user.language)
         backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
-        replyMarkup = StandardButtonMenu(replyButtons+backButton)
+        replyMarkup = EmoDiarySetupMarkup(replyButtons+backButton)
         await send_message(bot, user.user_id, replyTextFormatted, reply_markup=replyMarkup, repo = repo)
 
     else:

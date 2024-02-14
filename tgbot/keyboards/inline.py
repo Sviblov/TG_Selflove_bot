@@ -168,3 +168,28 @@ def EmoDiarySetupMarkup(ButtonsData: List[standard_button], back_button: standar
         keyboard.row(newbutton)
 
     return keyboard.as_markup()
+
+
+def EmoDiarySetupMarkup(ButtonsData: List[standard_button]):
+    keyboard = InlineKeyboardBuilder()
+
+    
+    for button in ButtonsData:
+        if button.key =='emodiary_add_emotion':
+            webappUrl = button.comment
+            webapp = WebAppInfo(
+            url=webappUrl,
+            )
+            newbutton = InlineKeyboardButton(
+                text=button.button_text,
+                web_app=webapp
+                )
+        
+        else:
+            newbutton = InlineKeyboardButton(
+                text=button.button_text,
+                callback_data=button.callback_data
+            )
+        
+        keyboard.row(newbutton)
+    return keyboard.as_markup()
