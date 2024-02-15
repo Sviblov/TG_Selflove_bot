@@ -76,7 +76,7 @@ def mainMenuButtons(ButtonsData: List[standard_button], severity_status: int, in
             button_dict['Herosjourney'],button_dict['interventionDesc']
         )
         keyboard.row(
-            button_dict['NTR'],button_dict['start_test']
+            button_dict['ntr'],button_dict['start_test']
         )
         keyboard.row(
             button_dict['security']
@@ -176,6 +176,31 @@ def EmoDiarySetupTrue(ButtonsData: List[standard_button]):
     
     for button in ButtonsData:
         if button.key =='emodiary_add_emotion':
+            webappUrl = button.comment
+            webapp = WebAppInfo(
+            url=webappUrl,
+            )
+            newbutton = InlineKeyboardButton(
+                text=button.button_text,
+                web_app=webapp
+                )
+        
+        else:
+            newbutton = InlineKeyboardButton(
+                text=button.button_text,
+                callback_data=button.callback_data
+            )
+        
+        keyboard.row(newbutton)
+    return keyboard.as_markup()
+
+
+def ntrSetupTrue(ButtonsData: List[standard_button]):
+    keyboard = InlineKeyboardBuilder()
+
+    
+    for button in ButtonsData:
+        if button.key =='ntr_add_record':
             webappUrl = button.comment
             webapp = WebAppInfo(
             url=webappUrl,

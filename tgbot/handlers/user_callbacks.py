@@ -14,7 +14,7 @@ from ..services.send_questionaire import sendNextQuestion, send_main_menu
 
 from ..misc.states import UserStates
 
-from ..keyboards.inline import StandardButtonMenu,dimeGameMarkup,EmoDiarySetupTrue, EmoDiarySetupMarkup,EmoDiarySetupMarkup
+from ..keyboards.inline import StandardButtonMenu,dimeGameMarkup,EmoDiarySetupTrue, ntrSetupTrue, EmoDiarySetupMarkup,EmoDiarySetupMarkup
 from infrastructure.database.models import message as logmessage
 
 user_callbacks_router = Router()
@@ -69,7 +69,7 @@ async def delete_messages(callback: CallbackQuery, state: FSMContext, repo: Requ
             'Herosjourney': {
                 'status':False
             },
-            'NTR': {
+            'ntr': {
                 'status':False
             },
         }
@@ -295,27 +295,27 @@ async def show_ntrdiary(callback: CallbackQuery, state: FSMContext, repo: Reques
     
 
     state_data = await state.get_data()
-    ntrStatus = state_data['interventionsStatus']['NTR']['status']
+    ntrStatus = state_data['interventionsStatus']['ntr']['status']
 
     if ntrStatus:
         replyText=await repo.interface.get_messageText('ntr_setup_true',user.language)
-        notifications = state_data['interventionsStatus']['NTR']['notification_time']
-        delta = state_data['interventionsStatus']['NTR']['timedelta']
+        notifications = state_data['interventionsStatus']['ntr']['notification_time']
+        delta = state_data['interventionsStatus']['ntr']['timedelta']
         notifications_formated = notifications
         timezone = 'UTC '+str(delta)
         replyTextFormatted = replyText.format(notifications_formated,timezone)
 
 
-        replyButtons= await repo.interface.get_ButtonLables('NTR_setup_true', user.language)
+        replyButtons= await repo.interface.get_ButtonLables('ntr_setup_true', user.language)
         backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
         #TODO
-        replyMarkup = EmoDiarySetupTrue(replyButtons+backButton)
+        replyMarkup = ntrSetupTrue(replyButtons+backButton)
         await send_message(bot, user.user_id, replyTextFormatted, reply_markup=replyMarkup, repo = repo)
 
     else:
 
-        replyText=await repo.interface.get_messageText('NTR_setup_false',user.language)
-        replyButtons= await repo.interface.get_ButtonLables('NTR_setup_false', user.language)
+        replyText=await repo.interface.get_messageText('ntr_setup_false',user.language)
+        replyButtons= await repo.interface.get_ButtonLables('ntr_setup_false', user.language)
         backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
         replyMarkup = StandardButtonMenu(replyButtons+backButton)
         await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
@@ -326,11 +326,11 @@ async def show_ntrdiary(callback: CallbackQuery, state: FSMContext, repo: Reques
 async def show_ntr_setup(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
 
-    replyButtons = await repo.interface.get_ButtonLables('NTR_setup_step_1', user.language)
+    replyButtons = await repo.interface.get_ButtonLables('ntr_setup_step_1', user.language)
     backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
     #TODO
     replyMarkup = EmoDiarySetupMarkup(replyButtons,backButton,2)
-    replyText = await repo.interface.get_messageText('NTR_setup_step_1',user.language)
+    replyText = await repo.interface.get_messageText('ntr_setup_step_1',user.language)
     
     stateData = await state.get_data()
     
@@ -346,28 +346,30 @@ async def show_ntr_setup_step_2(callback: CallbackQuery, state: FSMContext, repo
 
     stateData = await state.get_data()
     delta = int(callback.data.split('_')[1])
-    stateData['interventionsStatus']['UTC']['timedelta'] = delta
-
+    stateData['interventionsStatus']['ntr']['timedelta'] = delta
+    notifications=[]
     if len(callback.data.split('_'))==2:
         
-        pass
+        await state.set_data(stateData)
+        replyButtons = await repo.interface.get_ButtonLables('ntr_setup_step_2', user.language)
+        replyText = await repo.interface.get_messageText('ntr_setup_step_2',user.language)
+        backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
+        replyMarkup = EmoDiarySetupMarkup(replyButtons,backButton,3, delta)
+    
+        await callback.message.edit_text(replyText, reply_markup=replyMarkup)
         
         
     else:
       
         selected_time = callback.data.split('_')[2]
-        notifications = stateData['interventionsStatus']['UTC']['notification_time']
-        notifications.append(selected_time)
-        stateData['interventionsStatus']['UTC']['notification_time'] = notifications
-
-        await state.set_data(stateData)
         
-
-   
-        stateData['interventionsStatus']['UTC']['status'] = True
+       
+        stateData['interventionsStatus']['ntr']['notification_time'] = selected_time
+        await state.set_data(stateData)
+        stateData['interventionsStatus']['ntr']['status'] = True
         await state.set_data(stateData)
         await send_main_menu(bot, user.user_id, user.language, state, repo)
-    
+        
 
     
     
