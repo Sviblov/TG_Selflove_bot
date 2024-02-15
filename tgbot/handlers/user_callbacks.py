@@ -63,13 +63,13 @@ async def delete_messages(callback: CallbackQuery, state: FSMContext, repo: Requ
             'emodiary': {
                 'status':False
             },
-        'dimegame': {
+            'dimegame': {
                 'status':False
             },
-        'Herosjourney': {
+            'Herosjourney': {
                 'status':False
             },
-        'Negativethoughts': {
+            'NTR': {
                 'status':False
             },
         }
