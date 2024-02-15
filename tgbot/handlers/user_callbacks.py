@@ -290,7 +290,7 @@ async def show_emodiary_setup_step_2(callback: CallbackQuery, state: FSMContext,
 
 
 @user_callbacks_router.callback_query(F.data.in_({'ntr_menu'}), StateFilter(UserStates.main_menu))
-async def show_emodiary(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+async def show_ntrdiary(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
     
 

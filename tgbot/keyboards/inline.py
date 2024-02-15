@@ -76,7 +76,7 @@ def mainMenuButtons(ButtonsData: List[standard_button], severity_status: int, in
             button_dict['Herosjourney'],button_dict['interventionDesc']
         )
         keyboard.row(
-            button_dict['Negativethoughts'],button_dict['start_test']
+            button_dict['NTR'],button_dict['start_test']
         )
         keyboard.row(
             button_dict['security']
