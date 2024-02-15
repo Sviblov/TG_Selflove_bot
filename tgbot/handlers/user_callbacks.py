@@ -248,7 +248,7 @@ async def show_emodiary_setup_step_1(callback: CallbackQuery, state: FSMContext,
 
     await callback.message.edit_text(replyText, reply_markup=replyMarkup)
     
-@user_callbacks_router.callback_query(F.data.contains('emo_utc_'), StateFilter(UserStates.main_menu))
+@user_callbacks_router.callback_query(F.data.contains('emoutc_'), StateFilter(UserStates.main_menu))
 async def show_emodiary_setup_step_2(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
 
