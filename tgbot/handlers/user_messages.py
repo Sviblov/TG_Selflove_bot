@@ -33,7 +33,7 @@ async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bo
         'Herosjourney': {
                 'status':False
             },
-        'Negativethoughts': {
+        'NTR': {
                 'status':False
             },
         }

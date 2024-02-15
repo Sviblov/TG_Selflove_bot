@@ -248,7 +248,7 @@ async def show_emodiary_setup_step_1(callback: CallbackQuery, state: FSMContext,
 
     await callback.message.edit_text(replyText, reply_markup=replyMarkup)
     
-@user_callbacks_router.callback_query(F.data.contains('utc_'), StateFilter(UserStates.main_menu))
+@user_callbacks_router.callback_query(F.data.contains('emo_utc_'), StateFilter(UserStates.main_menu))
 async def show_emodiary_setup_step_2(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
 
@@ -287,6 +287,97 @@ async def show_emodiary_setup_step_2(callback: CallbackQuery, state: FSMContext,
         replyTextFormatted= replyText.format(numberOfnotification,len(notifications)+1)
         await callback.message.edit_text(replyTextFormatted, reply_markup=replyMarkup)
 
+
+
+@user_callbacks_router.callback_query(F.data.in_({'ntr_menu'}), StateFilter(UserStates.main_menu))
+async def show_emodiary(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    
+
+    state_data = await state.get_data()
+    ntrStatus = state_data['interventionsStatus']['NTR']['status']
+
+    if ntrStatus:
+        replyText=await repo.interface.get_messageText('ntr_setup_true',user.language)
+        notifications = state_data['interventionsStatus']['NTR']['notification_time']
+        delta = state_data['interventionsStatus']['NTR']['timedelta']
+        notifications_formated = notifications
+        timezone = 'UTC '+str(delta)
+        replyTextFormatted = replyText.format(notifications_formated,timezone)
+
+
+        replyButtons= await repo.interface.get_ButtonLables('NTR_setup_true', user.language)
+        backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
+        #TODO
+        replyMarkup = EmoDiarySetupTrue(replyButtons+backButton)
+        await send_message(bot, user.user_id, replyTextFormatted, reply_markup=replyMarkup, repo = repo)
+
+    else:
+
+        replyText=await repo.interface.get_messageText('NTR_setup_false',user.language)
+        replyButtons= await repo.interface.get_ButtonLables('NTR_setup_false', user.language)
+        backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
+        replyMarkup = StandardButtonMenu(replyButtons+backButton)
+        await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+
+
+
+@user_callbacks_router.callback_query(F.data=='ntr_setup_step_1', StateFilter(UserStates.main_menu))
+async def show_ntr_setup(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+
+    replyButtons = await repo.interface.get_ButtonLables('NTR_setup_step_1', user.language)
+    backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
+    #TODO
+    replyMarkup = EmoDiarySetupMarkup(replyButtons,backButton,2)
+    replyText = await repo.interface.get_messageText('NTR_setup_step_1',user.language)
+    
+    stateData = await state.get_data()
+    
+
+
+    await state.set_data(stateData)
+
+    await callback.message.edit_text(replyText, reply_markup=replyMarkup) 
+
+@user_callbacks_router.callback_query(F.data.contains('ntr_utc_'), StateFilter(UserStates.main_menu))
+async def show_ntr_setup_step_2(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+
+    stateData = await state.get_data()
+    delta = int(callback.data.split('_')[1])
+    stateData['interventionsStatus']['emodiary']['timedelta'] = delta
+
+    if len(callback.data.split('_'))==2:
+        
+        pass
+        
+        
+    else:
+      
+        selected_time = callback.data.split('_')[2]
+        notifications = stateData['interventionsStatus']['emodiary']['notification_time']
+        notifications.append(selected_time)
+        stateData['interventionsStatus']['emodiary']['notification_time'] = notifications
+
+        await state.set_data(stateData)
+        
+
+    notifications = stateData['interventionsStatus']['emodiary']['notification_time']
+    numberOfnotification = stateData['interventionsStatus']['emodiary']['no_of_notifications']
+
+    if len(notifications)==numberOfnotification:
+        stateData['interventionsStatus']['emodiary']['status'] = True
+        await state.set_data(stateData)
+        await send_main_menu(bot, user.user_id, user.language, state, repo)
+    else:
+        replyButtons = await repo.interface.get_ButtonLables('emodiary_setup_step_3', user.language)
+        replyText = await repo.interface.get_messageText('emodiary_setup_step_3',user.language)
+        backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
+        replyMarkup = EmoDiarySetupMarkup(replyButtons,backButton,3, delta)
+    
+        replyTextFormatted= replyText.format(numberOfnotification,len(notifications)+1)
+        await callback.message.edit_text(replyTextFormatted, reply_markup=replyMarkup)
 
 
     
