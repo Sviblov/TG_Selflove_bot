@@ -340,13 +340,13 @@ async def show_ntr_setup(callback: CallbackQuery, state: FSMContext, repo: Reque
 
     await callback.message.edit_text(replyText, reply_markup=replyMarkup) 
 
-@user_callbacks_router.callback_query(F.data.contains('ntr_utc_'), StateFilter(UserStates.main_menu))
+@user_callbacks_router.callback_query(F.data.contains('ntrutc_'), StateFilter(UserStates.main_menu))
 async def show_ntr_setup_step_2(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
 
     stateData = await state.get_data()
     delta = int(callback.data.split('_')[1])
-    stateData['interventionsStatus']['emodiary']['timedelta'] = delta
+    stateData['interventionsStatus']['UTC']['timedelta'] = delta
 
     if len(callback.data.split('_'))==2:
         
@@ -356,29 +356,18 @@ async def show_ntr_setup_step_2(callback: CallbackQuery, state: FSMContext, repo
     else:
       
         selected_time = callback.data.split('_')[2]
-        notifications = stateData['interventionsStatus']['emodiary']['notification_time']
+        notifications = stateData['interventionsStatus']['UTC']['notification_time']
         notifications.append(selected_time)
-        stateData['interventionsStatus']['emodiary']['notification_time'] = notifications
+        stateData['interventionsStatus']['UTC']['notification_time'] = notifications
 
         await state.set_data(stateData)
         
 
-    notifications = stateData['interventionsStatus']['emodiary']['notification_time']
-    numberOfnotification = stateData['interventionsStatus']['emodiary']['no_of_notifications']
-
-    if len(notifications)==numberOfnotification:
-        stateData['interventionsStatus']['emodiary']['status'] = True
+   
+        stateData['interventionsStatus']['UTC']['status'] = True
         await state.set_data(stateData)
         await send_main_menu(bot, user.user_id, user.language, state, repo)
-    else:
-        replyButtons = await repo.interface.get_ButtonLables('emodiary_setup_step_3', user.language)
-        replyText = await repo.interface.get_messageText('emodiary_setup_step_3',user.language)
-        backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
-        replyMarkup = EmoDiarySetupMarkup(replyButtons,backButton,3, delta)
     
-        replyTextFormatted= replyText.format(numberOfnotification,len(notifications)+1)
-        await callback.message.edit_text(replyTextFormatted, reply_markup=replyMarkup)
-
 
     
     
