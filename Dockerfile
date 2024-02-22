@@ -11,6 +11,7 @@ RUN pip install -r /usr/src/bot/requirements.txt
 # COPY . /usr/src/bot
 
 COPY alembic.ini /usr/src/bot
+COPY migrations /usr/src/bot/migrations
 RUN alembic upgrade head
 # RUN chmod +x /usr/src/bot/docker-entrypoint.sh
 
