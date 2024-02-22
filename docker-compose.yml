@@ -9,7 +9,7 @@ services:
       - .:/usr/src/bot
     build:
       context: .
-    command: "alembic upgrade head >&1 && python3 -m bot"
+    command: "alembic upgrade head && python3 -m bot"
     restart: always
     env_file:
       - ".env"
