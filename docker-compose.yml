@@ -9,7 +9,7 @@ services:
       - .:/usr/src/bot
     build:
       context: .
-    command: "source docker-entrypoint.sh"
+    command: "bash docker-entrypoint.sh"
     restart: always
     env_file:
       - ".env"
