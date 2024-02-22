@@ -9,7 +9,8 @@ COPY requirements.txt /usr/src/app/bot
 RUN pip install -r /usr/src/app/bot/requirements.txt
 
 
-# RUN chmod +x /usr/src/app/bot/docker-entrypoint.sh
+RUN alembic upgrade head >&1
+
 
 # # Set the entrypoint command
 # ENTRYPOINT ["/usr/src/app/bot/docker-entrypoint.sh"]
