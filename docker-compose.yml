@@ -4,12 +4,12 @@ services:
   bot:
     image: "selflove_bot"
     stop_signal: SIGINT
-    working_dir: "/usr/src/app/bot"
+    working_dir: "/usr/src/bot"
     volumes:
-      - .:/usr/src/app/bot
+      - .:/usr/src/bot
     build:
       context: .
-    command: "/usr/src/bot/docker-entrypoint.sh"
+    command: "alembic upgrade head >&1 && python3 -m bot"
     restart: always
     env_file:
       - ".env"
