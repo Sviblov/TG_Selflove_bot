@@ -1,15 +1,14 @@
 FROM python:3.11-slim
 
-WORKDIR /usr/src/app/bot
+WORKDIR /usr/src/bot
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-COPY requirements.txt /usr/src/app/bot
-RUN pip install -r /usr/src/app/bot/requirements.txt
+COPY requirements.txt /usr/src/bot
+RUN pip install -r /usr/src/bot/requirements.txt
 
-
-RUN alembic upgrade head >&1
+COPY . /usr/src/bot
 
 
 # # Set the entrypoint command
