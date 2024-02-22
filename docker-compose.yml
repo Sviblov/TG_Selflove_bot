@@ -1,0 +1,15 @@
+version: '3.3'
+
+services:
+  bot:
+    image: "selflove_bot"
+    stop_signal: SIGINT
+    build:
+      context: .
+    working_dir: "/usr/src/app/bot"
+    volumes:
+      - .:/usr/src/app/bot
+    entrypoint: "docker-entrypoint.sh"
+    restart: always
+    env_file:
+      - ".env"
