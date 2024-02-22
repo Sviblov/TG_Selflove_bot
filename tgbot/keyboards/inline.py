@@ -205,10 +205,14 @@ def ntrSetupTrue(ButtonsData: List[standard_button]):
             webapp = WebAppInfo(
             url=webappUrl,
             )
+
             newbutton = InlineKeyboardButton(
                 text=button.button_text,
-                web_app=webapp
+                web_app=webapp,
+                callback_data='testwebapp'
                 )
+            
+            
         
         else:
             newbutton = InlineKeyboardButton(
