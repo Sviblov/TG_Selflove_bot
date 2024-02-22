@@ -13,4 +13,4 @@ COPY . /usr/src/bot
 RUN chmod +x /usr/src/bot/docker-entrypoint.sh
 
 # # Set the entrypoint command
-# ENTRYPOINT ["/usr/src/app/bot/docker-entrypoint.sh"]
+# ENTRYPOINT ["/usr/src/bot/docker-entrypoint.sh"]
