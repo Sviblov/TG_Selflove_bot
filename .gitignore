@@ -64,3 +64,4 @@ venv.bak/
 cache/
 alembic.ini
 .vscode
+venv_back

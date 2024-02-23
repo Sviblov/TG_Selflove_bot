@@ -3,6 +3,7 @@ version: '3.3'
 services:
   bot:
     image: "selflove_bot"
+    container_name: "selflove_bot"
     stop_signal: SIGINT
     working_dir: "/usr/src/bot"
     volumes:
@@ -13,3 +14,33 @@ services:
     restart: always
     env_file:
       - ".env"
+
+
+  backend:
+    image: "backend"
+    container_name: "selflove_backend"
+    stop_signal: SIGINT
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    working_dir: "/usr/src/backend"
+    volumes:
+      - /backend:/usr/src/backend
+    command: [ "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    restart: always
+    env_file:
+      - ".env"
+
+
+
+  nginx:
+    container_name: selflove_nginx
+    stop_signal: SIGINT
+    restart: always
+    image: nginx:latest
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backend
