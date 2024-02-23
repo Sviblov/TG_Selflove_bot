@@ -26,7 +26,7 @@ services:
     working_dir: "/usr/src/backend"
     volumes:
       - /backend:/usr/src/backend
-    command: [ "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    command: [ "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
     restart: always
     env_file:
       - ".env"
