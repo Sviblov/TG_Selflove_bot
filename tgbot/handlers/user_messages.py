@@ -1,6 +1,6 @@
 from aiogram import Router
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message
+from aiogram.types import Message,ForceReply
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
@@ -65,9 +65,31 @@ async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bo
 
     await send_message(bot, user.user_id, replyTextFormated, repo = repo)
     
-@user_messages_router.message(CommandStart(),StateFilter(UserStates.main_menu))
+@user_messages_router.message(CommandStart(),StateFilter(UserStates.main_menu, UserStates.set_emotion))
 async def main_menu(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     
  
    await send_main_menu(bot, user.user_id, user.language, state, repo)
     
+@user_messages_router.message(StateFilter(UserStates.set_emotion_what_doing))
+async def set_emotion_what_doing(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+        current_data = await state.get_data()
+        current_data['set_emotion']['what_doing'] = message.text
+        await state.set_data(current_data)
+
+        await state.set_state(UserStates.set_emotion_what_thinking)
+        replyText=await repo.interface.get_messageText('emodiary_add_emotion_3',user.language)
+        await send_message(bot, user.user_id, replyText,reply_markup=ForceReply() ,  repo = repo)
+
+@user_messages_router.message(StateFilter(UserStates.set_emotion_what_thinking))
+async def set_emotion_what_thinking(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+        current_data = await state.get_data()
+        
+        emotion = current_data['set_emotion']['emotion']
+        await repo.interventions.putEmotion(message.from_user.id,message.chat.id, current_data['set_emotion']['emotion'], message.text, current_data['set_emotion']['what_doing'])
+        
+        current_data['set_emotion'] = None
+        await state.set_data(current_data)
+        await state.set_state(UserStates.main_menu)
+        
+        await send_main_menu(bot, user.user_id, user.language, state, repo)

@@ -8,3 +8,4 @@ from .questions import answer_option
 from .messages import message
 from .supported_languages import supported_language
 from .Polls import sentPoll, pollResults
+from .emotions import emotionRecord

@@ -15,6 +15,7 @@ async def send_message(
     reply_markup: InlineKeyboardMarkup = None,
     repo: RequestsRepo = None,
     disable_web_page_preview: bool = True,
+
 ) -> bool:
     """
     Safe messages sender
@@ -34,6 +35,7 @@ async def send_message(
             reply_markup=reply_markup,
             parse_mode="html",
             disable_web_page_preview=disable_web_page_preview,
+     
         )
         if repo is not None:
             await repo.log_message.put_message(replyMessage,  user_from=bot.id, user_to=user_id)

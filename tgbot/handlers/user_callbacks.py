@@ -1,8 +1,9 @@
 from aiogram import Router, F
 from aiogram.filters import CommandStart
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, ForceReply
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
+
 
 from aiogram import Bot
 
@@ -14,7 +15,7 @@ from ..services.send_questionaire import sendNextQuestion, send_main_menu
 
 from ..misc.states import UserStates
 
-from ..keyboards.inline import StandardButtonMenu,dimeGameMarkup,EmoDiarySetupTrue, ntrSetupTrue, EmoDiarySetupMarkup,EmoDiarySetupMarkup
+from ..keyboards.inline import StandardButtonMenu,dimeGameMarkup,EmoDiarySetupTrue, ntrSetupTrue, EmoDiarySetupMarkup,EmoDiarySetupMarkup, getEmotionList
 from infrastructure.database.models import message as logmessage
 
 user_callbacks_router = Router()
@@ -370,6 +371,35 @@ async def show_ntr_setup_step_2(callback: CallbackQuery, state: FSMContext, repo
         await state.set_data(stateData)
         await send_main_menu(bot, user.user_id, user.language, state, repo)
         
+@user_callbacks_router.callback_query(F.data=='emodiary_add_emotion', StateFilter(UserStates.main_menu))
+async def add_emotion_1(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    await state.set_state(UserStates.set_emotion)
+
+    replyText=await repo.interface.get_messageText('emodiary_add_emotion_1',user.language)
+    replyEmotionButtons=await repo.interface.get_ButtonLables('emodiary_add_emotion_1', user.language)
+    backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
+
+    replyMarkup = getEmotionList(replyEmotionButtons,backButton)
+    await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+
+    
+@user_callbacks_router.callback_query(F.data.contains('emotion_'), StateFilter(UserStates.set_emotion))
+async def add_emotion_2(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    await state.set_state(UserStates.set_emotion_what_doing)
+    current_data = await state.get_data()
+    current_data['set_emotion']={
+        'emotion': callback.data,
+        'what_doing': None,
+        'what_thinking': None
+    }
+    await state.set_data(current_data)
+
+    replyText=await repo.interface.get_messageText('emodiary_add_emotion_2',user.language)
+    
+    await send_message(bot, user.user_id, replyText,  repo = repo, reply_markup=ForceReply())
+ 
 
     
     

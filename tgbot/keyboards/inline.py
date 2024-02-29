@@ -176,15 +176,18 @@ def EmoDiarySetupTrue(ButtonsData: List[standard_button]):
     
     for button in ButtonsData:
         if button.key =='emodiary_add_emotion':
-            webappUrl = button.comment
-            webapp = WebAppInfo(
-            url=webappUrl,
-            )
+            # webappUrl = button.comment
+            # webapp = WebAppInfo(
+            # url=webappUrl,
+            # )
+            # newbutton = InlineKeyboardButton(
+            #     text=button.button_text,
+            #     web_app=webapp
+            #     )
             newbutton = InlineKeyboardButton(
                 text=button.button_text,
-                web_app=webapp
-                )
-        
+                callback_data=button.callback_data
+            )
         else:
             newbutton = InlineKeyboardButton(
                 text=button.button_text,
@@ -222,3 +225,30 @@ def ntrSetupTrue(ButtonsData: List[standard_button]):
         
         keyboard.row(newbutton)
     return keyboard.as_markup()
+
+
+def getEmotionList(ButtonsData: List[standard_button], backButton: standard_button):
+    keyboard = InlineKeyboardBuilder()
+
+    
+    for button1, button2 in zip(ButtonsData[::2], ButtonsData[1::2]):
+        newbutton1 = InlineKeyboardButton(
+            text=button1.button_text,
+            callback_data=button1.callback_data
+        )
+        newbutton2 = InlineKeyboardButton(
+            text=button2.button_text,
+            callback_data=button2.callback_data
+        )
+        
+        keyboard.row(newbutton1, newbutton2)
+
+    for button in backButton:
+        newbutton = InlineKeyboardButton(
+            text=button.button_text,
+            callback_data=button.callback_data
+            )
+        keyboard.row(newbutton)
+
+    return keyboard.as_markup()
+

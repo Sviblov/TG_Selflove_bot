@@ -9,6 +9,9 @@ class UserStates(StatesGroup):
     main_menu = State()
     hero_journey = State()
     confirm_start_test = State()
+    set_emotion = State()
+    set_emotion_what_doing = State()
+    set_emotion_what_thinking = State()
     
 
     

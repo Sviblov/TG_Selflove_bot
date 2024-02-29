@@ -7,6 +7,7 @@ from infrastructure.database.repo.interface import InterfaceRepo
 from infrastructure.database.repo.log_message import logMessageRepo
 from infrastructure.database.repo.questions import QuestionRepo
 from infrastructure.database.repo.poll_results import ResultsRepo
+from infrastructure.database.repo.interventions import InterventionsRepo
 from infrastructure.database.setup import create_engine
 
 
@@ -53,6 +54,13 @@ class RequestsRepo:
         The User repository sessions are required to manage user operations.
         """
         return ResultsRepo(self.session)
+
+    @property
+    def interventions(self) -> InterventionsRepo:
+        """
+        The User repository sessions are required to manage user operations.
+        """
+        return InterventionsRepo(self.session)
 
 if __name__ == "__main__":
     from infrastructure.database.setup import create_session_pool
