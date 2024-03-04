@@ -29,7 +29,7 @@ async def sendNextQuestion(
             data = await state.get_data()
             polls_left = data['polls_left']
             current_question = data['current_question']
-            
+            #todo: do not hardcode border number
             if polls_left == 0:
                 await state.set_state(UserStates.main_menu)
                 results = await repo.results.calculateTestResult(user_id)

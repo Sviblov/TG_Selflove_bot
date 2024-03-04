@@ -13,6 +13,8 @@ from tgbot.middlewares.database import DatabaseMiddleware
 from tgbot.middlewares.messageLogging import LoggingMiddleware
 from tgbot.services import services
 from aiogram.methods.send_message import SendMessage
+from aiogram.types import BufferedInputFile
+
 
 from infrastructure.database.setup import create_engine
 from infrastructure.database.setup import create_session_pool

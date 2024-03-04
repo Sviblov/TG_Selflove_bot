@@ -4,7 +4,7 @@ from aiogram.types import CallbackQuery, ForceReply
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
-
+import os
 from aiogram import Bot
 
 from infrastructure.database.repo.requests import RequestsRepo
@@ -14,6 +14,9 @@ from ..services.services import send_message, delete_message
 from ..services.send_questionaire import sendNextQuestion, send_main_menu
 
 from ..misc.states import UserStates
+
+from ..misc.emodiary_report import generatePDFReport
+from aiogram.types import BufferedInputFile
 
 from ..keyboards.inline import StandardButtonMenu,dimeGameMarkup,EmoDiarySetupTrue, ntrSetupTrue, EmoDiarySetupMarkup,EmoDiarySetupMarkup, getEmotionList
 from infrastructure.database.models import message as logmessage
@@ -277,6 +280,9 @@ async def show_emodiary_setup_step_2(callback: CallbackQuery, state: FSMContext,
 
     if len(notifications)==numberOfnotification:
         stateData['interventionsStatus']['emodiary']['status'] = True
+        #save intervention notification to DB
+
+        
         await state.set_data(stateData)
         await send_main_menu(bot, user.user_id, user.language, state, repo)
     else:
@@ -402,4 +408,17 @@ async def add_emotion_2(callback: CallbackQuery, state: FSMContext, repo: Reques
  
 
     
+
+@user_callbacks_router.callback_query(F.data == 'generate_emodiary_report')
+async def generate_reports(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    emotions = await repo.interventions.getEmotions(user.user_id)
+    title = "Emotional Diary Report"
+    path = '/home/ubuntu/TG_Selflove_bot/report_template'
+
+    print(os.getcwd())
+
+    pdfReport = generatePDFReport(title, emotions, path)
+    text_file = BufferedInputFile(pdfReport, filename="report.pdf")
     
+    await bot.send_document(user.user_id, text_file)
