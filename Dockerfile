@@ -5,7 +5,9 @@ WORKDIR /usr/src/bot
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+
 COPY requirements.txt /usr/src/bot
+RUN sudo apt-get install libpango1.0-dev
 RUN pip install -r /usr/src/bot/requirements.txt
 
 # COPY . /usr/src/bot
