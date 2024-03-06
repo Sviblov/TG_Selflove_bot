@@ -271,9 +271,14 @@ async def show_emodiary_setup_step_2(callback: CallbackQuery, state: FSMContext,
         stateData['interventionsStatus']['emodiary']['status'] = True
         #save intervention notification to DB
         
-        await repo.interventions.deleteNotificationTime(user.user_id)
+        await repo.interventions.deleteNotificationTime(user.user_id, 'emodiary')
         for notificationTime in notifications:
             selected_hour_utc =int(notificationTime.split(':')[0])-delta
+            if selected_hour_utc>=24:
+                selected_hour_utc = selected_hour_utc-24
+            elif selected_hour_utc<0:
+                selected_hour_utc = selected_hour_utc+24
+                
             await repo.interventions.setNotificationTime(user.user_id,'emodiary',str(delta), time(selected_hour_utc,0,0))
         
         # await repo.interventions.setNotificationTime(user.user_id,'emodiary',delta, notifications)
@@ -367,6 +372,15 @@ async def show_ntr_setup_step_2(callback: CallbackQuery, state: FSMContext, repo
        
         stateData['interventionsStatus']['ntr']['notification_time'] = selected_time
         await state.set_data(stateData)
+
+        selected_hour_utc =int(selected_time.split(':')[0])-delta
+        if selected_hour_utc>=24:
+            selected_hour_utc = selected_hour_utc-24
+        elif selected_hour_utc<0:
+            selected_hour_utc = selected_hour_utc+24
+        
+        await repo.interventions.deleteNotificationTime(user.user_id, 'ntr')
+        await repo.interventions.setNotificationTime(user.user_id,'ntr',str(delta), time(selected_hour_utc,0,0))
         stateData['interventionsStatus']['ntr']['status'] = True
         await state.set_data(stateData)
         await send_main_menu(bot, user.user_id, user.language, state, repo)

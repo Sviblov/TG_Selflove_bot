@@ -65,18 +65,7 @@ class InterventionsRepo(BaseRepo):
         )
         return result.scalars().first()
     
-    async def deleteNotificationTime(
-            self,
-            user_id: int
-        ) -> str:
-        
-        delete_previous = delete(notification_setting).where(
-            user_id==user_id
-        )
-        await self.session.execute(delete_previous)
-        await self.session.commit()
-        return 'done'
-    
+
 
     async def setNotificationTime(
             self,
@@ -104,11 +93,13 @@ class InterventionsRepo(BaseRepo):
     
     async def deleteNotificationTime(
             self,
-            user_id: int
+            user_id: int,
+            notification_type: str
         ) -> str:
         
         delete_previous = delete(notification_setting).where(
-            user_id==user_id
+            (notification_setting.user_id==user_id) &
+            (notification_setting.notification_type==notification_type)
         )
         await self.session.execute(delete_previous)
         await self.session.commit()
