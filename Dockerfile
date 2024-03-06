@@ -7,7 +7,10 @@ ENV PYTHONUNBUFFERED 1
 
 
 COPY requirements.txt /usr/src/bot
-RUN apt-get install libpango1.0-dev
+
+RUN apt-get update
+RUN apt-get -y install python3-brotli libpango-1.0-0 libpangoft2-1.0-0
+
 RUN pip install -r /usr/src/bot/requirements.txt
 
 # COPY . /usr/src/bot
