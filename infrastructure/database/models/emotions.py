@@ -18,7 +18,7 @@ class emotionRecord(Base):
     """
     id: Mapped[int] = mapped_column(BIGINT, primary_key=True, autoincrement=True)
     chat_id: Mapped[int] = mapped_column(BIGINT)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id",ondelete='CASCADE'))
     timestamp: Mapped[str] = mapped_column(TIMESTAMP, server_default=func.now())
     emotion: Mapped[str]= mapped_column(String(16))
     what_thinking: Mapped[str] = mapped_column(TEXT)

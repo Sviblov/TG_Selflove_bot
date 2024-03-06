@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.dialects.postgresql import insert
 
 from infrastructure.database.models import User,supported_language
@@ -65,3 +65,14 @@ class UserRepo(BaseRepo):
             
             #In order not to overload DB:
             return 'en'
+
+
+    async def deleteUser(
+        self,
+        user_id: int
+    ):
+        delete_data = delete(User).where(User.user_id==user_id)
+        result = await self.session.execute(delete_data)
+        await self.session.commit()
+        return result
+    

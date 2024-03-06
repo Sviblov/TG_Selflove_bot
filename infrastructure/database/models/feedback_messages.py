@@ -17,7 +17,7 @@ class feedback_message(Base):
     This class represents a messages sent by users
     """
     id: Mapped[int] = mapped_column(BIGINT, primary_key=True, autoincrement=True)
-    user_from: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
+    user_from: Mapped[int] = mapped_column(BIGINT)
     feedback_text: Mapped[str]  = mapped_column(TEXT,nullable=True)
     sent_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
 

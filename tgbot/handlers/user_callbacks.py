@@ -3,8 +3,10 @@ from aiogram.filters import CommandStart
 from aiogram.types import CallbackQuery, ForceReply
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-
+import logging
 import os
+from datetime import datetime, time
+
 from aiogram import Bot
 
 from infrastructure.database.repo.requests import RequestsRepo
@@ -12,6 +14,7 @@ from infrastructure.database.models.users import User
 
 from ..services.services import send_message, delete_message
 from ..services.send_questionaire import sendNextQuestion, send_main_menu
+from ..services.put_user_to_default import putUserToDefault
 
 from ..misc.states import UserStates
 
@@ -22,7 +25,7 @@ from ..keyboards.inline import StandardButtonMenu,dimeGameMarkup,EmoDiarySetupTr
 from infrastructure.database.models import message as logmessage
 
 user_callbacks_router = Router()
-
+logger = logging.getLogger(__name__)
 
 @user_callbacks_router.callback_query(F.data=="start_test", StateFilter(UserStates.welcome_new_user_2,UserStates.confirm_start_test))
 async def start_test(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
@@ -53,34 +56,8 @@ async def notify_about_started_test(callback: CallbackQuery, state: FSMContext, 
 @user_callbacks_router.callback_query(F.data=="delete_all")
 async def delete_messages(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
-    allMessages = await repo.log_message.get_messages(user.user_id)
-    
-    for message in allMessages:
-       
-        await delete_message(bot, message[0],message[1])
-        
-    
-    await repo.log_message.delete_messages(user.user_id)
+    await putUserToDefault(user, repo, bot, state)
 
-    data= {
-        'interventionsStatus': {
-            'emodiary': {
-                'status':False
-            },
-            'dimegame': {
-                'status':False
-            },
-            'Herosjourney': {
-                'status':False
-            },
-            'ntr': {
-                'status':False
-            },
-        }
-    }
-    await state.set_data(data)
-
-    await state.set_state(None)
 
 @user_callbacks_router.callback_query(F.data=='welcome_2', StateFilter(UserStates.welcome_new_user_1))
 async def send_second_message(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
@@ -237,20 +214,29 @@ async def show_emodiary_setup_step_1(callback: CallbackQuery, state: FSMContext,
     await callback.answer()
 
     numberOfNotification = int(callback.data[-1])
+    if numberOfNotification == 0:
+        repo.interventions.deleteNotificationTime(user.user_id) 
+        stateData = await state.get_data()  
+        stateData['interventionsStatus']['emodiary']['no_of_notifications'] = 0
+        stateData['interventionsStatus']['emodiary']['notification_time'] = ['Do Not Notify']
+        stateData['interventionsStatus']['emodiary']['timedelta'] = 0
+        stateData['interventionsStatus']['emodiary']['status'] = True
+        await state.set_data(stateData)
+        await send_main_menu(bot, user.user_id, user.language, state, repo)
+    else:
+        replyButtons = await repo.interface.get_ButtonLables('emodiary_setup_step_2', user.language)
+        backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
+        replyMarkup = EmoDiarySetupMarkup(replyButtons,backButton,2)
+        replyText = await repo.interface.get_messageText('emodiary_setup_step_2',user.language)
+        
+        stateData = await state.get_data()
+        stateData['interventionsStatus']['emodiary']['no_of_notifications'] = numberOfNotification
+        
+        stateData['interventionsStatus']['emodiary']['notification_time'] = []
 
-    replyButtons = await repo.interface.get_ButtonLables('emodiary_setup_step_2', user.language)
-    backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
-    replyMarkup = EmoDiarySetupMarkup(replyButtons,backButton,2)
-    replyText = await repo.interface.get_messageText('emodiary_setup_step_2',user.language)
-    
-    stateData = await state.get_data()
-    stateData['interventionsStatus']['emodiary']['no_of_notifications'] = numberOfNotification
-    
-    stateData['interventionsStatus']['emodiary']['notification_time'] = []
+        await state.set_data(stateData)
 
-    await state.set_data(stateData)
-
-    await callback.message.edit_text(replyText, reply_markup=replyMarkup)
+        await callback.message.edit_text(replyText, reply_markup=replyMarkup)
     
 @user_callbacks_router.callback_query(F.data.contains('emoutc_'), StateFilter(UserStates.main_menu))
 async def show_emodiary_setup_step_2(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
@@ -266,8 +252,11 @@ async def show_emodiary_setup_step_2(callback: CallbackQuery, state: FSMContext,
         
         
     else:
-      
+        
+        
         selected_time = callback.data.split('_')[2]
+
+
         notifications = stateData['interventionsStatus']['emodiary']['notification_time']
         notifications.append(selected_time)
         stateData['interventionsStatus']['emodiary']['notification_time'] = notifications
@@ -281,10 +270,13 @@ async def show_emodiary_setup_step_2(callback: CallbackQuery, state: FSMContext,
     if len(notifications)==numberOfnotification:
         stateData['interventionsStatus']['emodiary']['status'] = True
         #save intervention notification to DB
-        for notificationTime in notifications:
-            await repo.interventions.setNotificationTime(user.user_id,'emodiary',delta, notificationTime)
         
-        await repo.interventions.setNotificationTime(user.user_id,'emodiary',delta, notifications)
+        await repo.interventions.deleteNotificationTime(user.user_id)
+        for notificationTime in notifications:
+            selected_hour_utc =int(notificationTime.split(':')[0])-delta
+            await repo.interventions.setNotificationTime(user.user_id,'emodiary',str(delta), time(selected_hour_utc,0,0))
+        
+        # await repo.interventions.setNotificationTime(user.user_id,'emodiary',delta, notifications)
         await state.set_data(stateData)
         await send_main_menu(bot, user.user_id, user.language, state, repo)
     else:
@@ -416,18 +408,19 @@ async def generate_reports(callback: CallbackQuery, state: FSMContext, repo: Req
     await callback.answer()
     emotions = await repo.interventions.getEmotions(user.user_id)
     title = "Emotional Diary Report"
-    path = '/home/ubuntu/TG_Selflove_bot/report_template'
+    path =os.getcwd()+'/report_template'
 
-    print(os.getcwd())
+    
 
     pdfReport = generatePDFReport(title, emotions, path)
     text_file = BufferedInputFile(pdfReport, filename="report.pdf")
     
-    await bot.send_document(user.user_id, text_file)
+    document = await bot.send_document(user.user_id, text_file)
+    await repo.log_message.put_message(document,user.user_id, bot.id)
 
 
 @user_callbacks_router.callback_query(F.data == 'feedback', StateFilter(UserStates.main_menu))
-async def show_one_message(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+async def get_feedback(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
     
     await state.set_state(UserStates.ask_feedback)

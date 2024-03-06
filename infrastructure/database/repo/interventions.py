@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.dialects.postgresql import insert
 
 from infrastructure.database.models import standard_message,standard_button, supported_language, notification_setting
@@ -64,7 +64,20 @@ class InterventionsRepo(BaseRepo):
             )
         )
         return result.scalars().first()
+    
+    async def deleteNotificationTime(
+            self,
+            user_id: int
+        ) -> str:
         
+        delete_previous = delete(notification_setting).where(
+            user_id==user_id
+        )
+        await self.session.execute(delete_previous)
+        await self.session.commit()
+        return 'done'
+    
+
     async def setNotificationTime(
             self,
             user_id: int,
@@ -73,6 +86,9 @@ class InterventionsRepo(BaseRepo):
             notification_time: str
         ) -> str:
         
+        
+        
+
         insert_result = insert(notification_setting).values(
             user_id=user_id,
             notification_time=notification_time,
@@ -85,3 +101,27 @@ class InterventionsRepo(BaseRepo):
         
         await self.session.commit()
         return result.scalars().first()
+    
+    async def deleteNotificationTime(
+            self,
+            user_id: int
+        ) -> str:
+        
+        delete_previous = delete(notification_setting).where(
+            user_id==user_id
+        )
+        await self.session.execute(delete_previous)
+        await self.session.commit()
+        return 'done'
+    
+
+    async def deleteAllEmotions(
+            self,
+            user_id: int
+    )-> str:
+        delete_emotions = delete(emotionRecord).where(
+            user_id==user_id
+        )
+        await self.session.execute(delete_emotions)
+        await self.session.commit()
+        return 'done'

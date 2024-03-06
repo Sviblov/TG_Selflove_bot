@@ -20,7 +20,7 @@ class sentPoll(Base):
     poll_id: Mapped[str] = mapped_column(String(32),primary_key=True)
     message_id: Mapped[int] = mapped_column(ForeignKey("communication_history.message_id",ondelete='CASCADE'))
     question_id: Mapped[int] = mapped_column(ForeignKey("questions.question_id"))
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id",ondelete='CASCADE'))
     selected_answer: Mapped[int] = mapped_column(INT, nullable=True)
 
 class pollResults(Base):
@@ -29,7 +29,7 @@ class pollResults(Base):
     This class represents a sent poll
     """
     poll_id: Mapped[int] = mapped_column(INT,primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id",ondelete='CASCADE'))
     score: Mapped[int] = mapped_column(INT)
     severity_status: Mapped[int] = mapped_column(INT, nullable=True)
     is_valid: Mapped[bool] = mapped_column(BOOLEAN)

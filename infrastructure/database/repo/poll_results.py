@@ -152,6 +152,7 @@ class ResultsRepo(BaseRepo):
         severityStatus=result.severity_status
 
         return severityStatus
+    
     async def deleteLastSentPolls(
         self,
         user_id: Union[int,str],
