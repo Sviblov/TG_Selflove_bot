@@ -16,7 +16,7 @@ class message(Base):
     """
     This class represents a messages sent by users
     """
-    chat_id: Mapped[int] = mapped_column(BIGINT)
+    chat_id: Mapped[int] = mapped_column(BIGINT, primary_key=True)
     message_id: Mapped[int] = mapped_column(BIGINT, primary_key=True)
     message_type: Mapped[str] = mapped_column(String(16))
     user_from: Mapped[int] = mapped_column(ForeignKey("users.user_id"))

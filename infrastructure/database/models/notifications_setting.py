@@ -18,11 +18,11 @@ class notification_setting(Base):
     This class represents a users' emotion record
     """
     id: Mapped[int] = mapped_column(BIGINT, primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(BIGINT)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id"))
     notification_type: Mapped[str]= mapped_column(String(16))
     timedelta: Mapped[str] = mapped_column(String(16))
     notification_time: Mapped[str] = mapped_column(TIMESTAMP)
-    
+
     def __repr__(self):
         return f"<Emotion user:{self.user_id} >"
     

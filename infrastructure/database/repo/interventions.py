@@ -5,7 +5,7 @@ from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
-from infrastructure.database.models import standard_message,standard_button, supported_language
+from infrastructure.database.models import standard_message,standard_button, supported_language, notification_setting
 
 from infrastructure.database.repo.base import BaseRepo
 from infrastructure.database.repo.users import UserRepo
@@ -65,3 +65,23 @@ class InterventionsRepo(BaseRepo):
         )
         return result.scalars().first()
         
+    async def setNotificationTime(
+            self,
+            user_id: int,
+            notification_type: str,
+            timedelta: int,
+            notification_time: str
+        ) -> str:
+        
+        insert_result = insert(notification_setting).values(
+            user_id=user_id,
+            notification_time=notification_time,
+            timedelta=timedelta,
+            notification_type=notification_type
+            
+            ).returning(notification_setting)
+        
+        result = await self.session.execute(insert_result)
+        
+        await self.session.commit()
+        return result.scalars().first()
