@@ -13,5 +13,8 @@ class UserStates(StatesGroup):
     set_emotion_what_doing = State()
     set_emotion_what_thinking = State()
     ask_feedback =State()
+    set_ntr_step_1 = State()
+    set_ntr_step_2 = State()
+
 
     

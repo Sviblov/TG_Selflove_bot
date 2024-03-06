@@ -65,7 +65,12 @@ async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bo
 
     await send_message(bot, user.user_id, replyTextFormated, repo = repo)
     
-@user_messages_router.message(CommandStart(),StateFilter(UserStates.main_menu, UserStates.set_emotion))
+@user_messages_router.message(CommandStart(),StateFilter(UserStates.main_menu, 
+                                                         UserStates.set_emotion,
+                                                         UserStates.set_emotion_what_doing,
+                                                         UserStates.set_emotion_what_thinking,
+                                                         UserStates.set_ntr_step_1,
+                                                         UserStates.set_ntr_step_1))
 async def main_menu(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     
  
@@ -110,3 +115,26 @@ async def set_emotion_what_thinking(message: Message, state: FSMContext, repo: R
         else:
             replyText = repo.interface.get_messageText('not_text_feedback', user.language)
             await send_message(bot, user.user_id, replyText, repo = repo)
+
+
+@user_messages_router.message(StateFilter(UserStates.set_ntr_step_1))
+async def set_emotion_what_doing(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+        current_data = await state.get_data()
+        current_data['set_ntr']['negative_thought'] = message.text
+        await state.set_data(current_data)
+
+        await state.set_state(UserStates.set_ntr_step_2)
+        replyText=await repo.interface.get_messageText('ntr_set_step_1',user.language)
+        await send_message(bot, user.user_id, replyText,reply_markup=ForceReply(),  repo = repo)
+
+
+@user_messages_router.message(StateFilter(UserStates.set_ntr_step_2))
+async def set_emotion_what_doing(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+        current_data = await state.get_data()
+       
+        
+        await repo.interventions.putNegativeThought(message.from_user.id,message.chat.id, current_data['set_ntr']['negative_thought'], message.text)
+        current_data['set_ntr'] = None
+        await state.set_data(current_data)
+        await state.set_state(UserStates.main_menu)
+        await send_main_menu(bot, user.user_id, user.language, state, repo)

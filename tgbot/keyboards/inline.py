@@ -217,17 +217,20 @@ def ntrSetupTrue(ButtonsData: List[standard_button]):
     
     for button in ButtonsData:
         if button.key =='ntr_add_record':
-            webappUrl = button.comment
-            webapp = WebAppInfo(
-            url=webappUrl,
-            )
+            # webappUrl = button.comment
+            # webapp = WebAppInfo(
+            # url=webappUrl,
+            # )
 
+            # newbutton = InlineKeyboardButton(
+            #     text=button.button_text,
+            #     web_app=webapp,
+            #     callback_data='testwebapp'
+            #     )
             newbutton = InlineKeyboardButton(
                 text=button.button_text,
-                web_app=webapp,
-                callback_data='testwebapp'
-                )
-            
+                callback_data=button.callback_data
+            )
             
         
         else:

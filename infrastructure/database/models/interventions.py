@@ -27,3 +27,18 @@ class emotionRecord(Base):
     def __repr__(self):
         return f"<Emotion user:{self.user_id} >"
     
+
+class ntrRecord(Base):
+    __tablename__ = "ntr_records"
+    """
+    This class represents a users' emotion record
+    """
+    id: Mapped[int] = mapped_column(BIGINT, primary_key=True, autoincrement=True)
+    chat_id: Mapped[int] = mapped_column(BIGINT)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id",ondelete='CASCADE'))
+    timestamp: Mapped[str] = mapped_column(TIMESTAMP, server_default=func.now())
+    negative_thought: Mapped[str] = mapped_column(TEXT)
+    reframing: Mapped[str] = mapped_column(TEXT)
+
+    def __repr__(self):
+        return f"<nt user:{self.user_id} >"

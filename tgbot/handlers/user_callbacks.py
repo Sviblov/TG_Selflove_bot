@@ -421,12 +421,12 @@ async def add_emotion_2(callback: CallbackQuery, state: FSMContext, repo: Reques
 async def generate_reports(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
     emotions = await repo.interventions.getEmotions(user.user_id)
-    title = "Emotional Diary Report"
+    title = await repo.interface.get_messageText('emodiary_report_title',user.language)
     path =os.getcwd()+'/report_template'
 
     
 
-    pdfReport = generatePDFReport(title, emotions, path)
+    pdfReport = generatePDFReport(title, emotions, path, "EmoDiary_report_template.html" )
     text_file = BufferedInputFile(pdfReport, filename="report.pdf")
     
     document = await bot.send_document(user.user_id, text_file)
@@ -442,3 +442,35 @@ async def get_feedback(callback: CallbackQuery, state: FSMContext, repo: Request
     replyMarkup = ForceReply()
     
     await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+
+
+@user_callbacks_router.callback_query(F.data=='ntr_add_record', StateFilter(UserStates.main_menu))
+async def add_ntr_1(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    await state.set_state(UserStates.set_ntr_step_1)
+    current_data = await state.get_data()
+    current_data['set_ntr']={
+        'negative_thought': None,
+        'reframing': None
+    }
+    await state.set_data(current_data)
+    replyText=await repo.interface.get_messageText('ntr_set_step_1',user.language)
+    
+    replyMarkup = ForceReply()
+    await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+
+
+@user_callbacks_router.callback_query(F.data == 'generate_ntr_report')
+async def generate_reports(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    ntrEntries = await repo.interventions.getNegativeThought(user.user_id)
+    title = await repo.interface.get_messageText('ntr_report_title',user.language)
+    path =os.getcwd()+'/report_template'
+
+    
+
+    pdfReport = generatePDFReport(title, ntrEntries, path, "NTR_report_template.html" )
+    text_file = BufferedInputFile(pdfReport, filename="report.pdf")
+    
+    document = await bot.send_document(user.user_id, text_file)
+    await repo.log_message.put_message(document,user.user_id, bot.id)

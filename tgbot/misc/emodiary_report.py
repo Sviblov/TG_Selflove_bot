@@ -2,14 +2,14 @@ from weasyprint import HTML
 from jinja2 import Environment, FileSystemLoader
 
 
-def generatePDFReport(title, emotions, path):
+def generatePDFReport(title, listData, path, reportTemplate):
 
     env = Environment(loader=FileSystemLoader(path))
-    template = env.get_template('Report_template.html')
+    template = env.get_template(reportTemplate)
 
     data = {
         'title': title,
-        'emotions': emotions
+        'listData': listData
     }
     rendered_html = template.render(data)
 
