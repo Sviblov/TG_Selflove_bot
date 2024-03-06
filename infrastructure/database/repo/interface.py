@@ -5,11 +5,11 @@ from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
-from infrastructure.database.models import standard_message,standard_button, supported_language
+from infrastructure.database.models import standard_message,standard_button, supported_language, feedback_message
 
 from infrastructure.database.repo.base import BaseRepo
 from infrastructure.database.repo.users import UserRepo
-
+from aiogram.types import Message
 
 logger = logging.getLogger('interface')
 
@@ -90,3 +90,17 @@ class InterfaceRepo(BaseRepo):
         rows = await self.session.execute(select_data)
         
         return rows.scalars().all()
+    
+
+    async def putFeedback(
+        self,
+        message: Message,
+        user_id: int
+    ):
+        insert_data = insert(feedback_message).values(
+            user_from=user_id,
+            feedback_text=message.text
+        )
+        await self.session.execute(insert_data)
+        await self.session.commit()
+        

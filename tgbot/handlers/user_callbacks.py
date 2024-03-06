@@ -135,7 +135,7 @@ async def confirm_start_test_again(callback: CallbackQuery, state: FSMContext, r
     await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
 
 
-@user_callbacks_router.callback_query(F.data.in_({'psysupport','showvideo','interventionDesc','heros_journey','hotline', 'feedback'}), StateFilter(UserStates.main_menu))
+@user_callbacks_router.callback_query(F.data.in_({'psysupport','showvideo','interventionDesc','heros_journey','hotline'}), StateFilter(UserStates.main_menu))
 async def show_one_message(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
     if callback.data == 'showvideo':
@@ -424,3 +424,14 @@ async def generate_reports(callback: CallbackQuery, state: FSMContext, repo: Req
     text_file = BufferedInputFile(pdfReport, filename="report.pdf")
     
     await bot.send_document(user.user_id, text_file)
+
+
+@user_callbacks_router.callback_query(F.data == 'feedback', StateFilter(UserStates.main_menu))
+async def show_one_message(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    
+    await state.set_state(UserStates.ask_feedback)
+    replyText=await repo.interface.get_messageText(callback.data,user.language)
+    replyMarkup = ForceReply()
+    
+    await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)

@@ -10,3 +10,4 @@ from .supported_languages import supported_language
 from .Polls import sentPoll, pollResults
 from .emotions import emotionRecord
 from .notifications_setting import notification_setting
+from .feedback_messages import feedback_message

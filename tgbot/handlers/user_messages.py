@@ -93,3 +93,20 @@ async def set_emotion_what_thinking(message: Message, state: FSMContext, repo: R
         await state.set_state(UserStates.main_menu)
         
         await send_main_menu(bot, user.user_id, user.language, state, repo)
+
+
+@user_messages_router.message(StateFilter(UserStates.ask_feedback))
+async def set_emotion_what_thinking(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+       
+        
+        await state.set_state(UserStates.main_menu)
+   
+        if message.content_type == 'text':
+            await send_message(bot, 173409214, f'Feedback from {user.username} {user.full_name}: {message.text}', repo = repo)
+            # await send_message(bot, '6808009045', f'Feedback from {user.username }: {message.text}', repo = repo)
+            await send_message(bot, user.user_id, 'Thank you for your feedback', repo = repo)
+            await repo.interface.putFeedback(message, user.user_id)
+            await send_main_menu(bot, user.user_id, user.language, state, repo)
+        else:
+            replyText = repo.interface.get_messageText('not_text_feedback', user.language)
+            await send_message(bot, user.user_id, replyText, repo = repo)
