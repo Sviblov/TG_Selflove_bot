@@ -5,6 +5,3 @@ ENV PYTHONUNBUFFERED 1
 
 COPY ./requirements.txt /usr/src/backend/requirements.txt
 RUN pip install -r /usr/src/backend/requirements.txt --pre
-
-
-

@@ -14,7 +14,7 @@ class standard_message(Base,TableNameMixin):
     This class represents a Standard Message in the application.
     """
     key: Mapped[str]  = mapped_column(String(32), primary_key=True, autoincrement=False)
-    language: Mapped[str] = mapped_column(String(10), server_default=text("'en'"))
+    language: Mapped[str] = mapped_column(String(10),primary_key=True, server_default=text("'en'"))
     message: Mapped[str]  = mapped_column(TEXT)
     comment: Mapped[str]  = mapped_column(String(256))
 
@@ -29,7 +29,7 @@ class standard_button(Base,TableNameMixin):
     """
     key: Mapped[str]  = mapped_column(String(32), primary_key=True, autoincrement=False)
     menu_key: Mapped[str]  = mapped_column(String(32),primary_key=True, autoincrement=False)
-    language: Mapped[str] = mapped_column(String(10), server_default=text("'en'"))
+    language: Mapped[str] = mapped_column(String(10), primary_key=True, server_default=text("'en'"))
     button_text: Mapped[str]  = mapped_column(String(256))
     callback_data: Mapped[str]  = mapped_column(String(32))
     comment: Mapped[str]  = mapped_column(String(256))

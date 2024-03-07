@@ -138,3 +138,13 @@ async def set_emotion_what_doing(message: Message, state: FSMContext, repo: Requ
         await state.set_data(current_data)
         await state.set_state(UserStates.main_menu)
         await send_main_menu(bot, user.user_id, user.language, state, repo)
+
+
+@user_messages_router.message(Command('language'))
+async def security_menu(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    replyText=await repo.interface.get_messageText('choose_language','en')
+    replyButtons= await repo.interface.get_ButtonLables('choose_language', 'en')
+    replyMarkup=StandardButtonMenu(replyButtons)
+    
+    replyMessage = await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+
