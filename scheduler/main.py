@@ -88,18 +88,13 @@ async def main():
         ntrNotificationText = await repo.interface.get_messageText('ntrNotification', 'en')
         ntrNotificationButtons = await repo.interface.get_ButtonLables('ntrNotification','en')
         ntrNotificationMarkup = StandardButtonMenu(ntrNotificationButtons)
-    
-    async with bot.session: 
-        await services.broadcastNotifications(bot,emoDiaryNotifications,emotionNotificationText, reply_markup=emotionNotificationMarkup)
-        await services.broadcastNotifications(bot,ntrNotifications,ntrNotificationText, reply_markup=ntrNotificationMarkup)
-    
-  
-        
-    
-    
-    
-    # await on_startup(bot, config.tg_bot.admin_ids)
-    logging.info("Scheduler ended")
+        async with bot.session: 
+            countEmotionNotifications = await services.broadcastNotifications(bot,emoDiaryNotifications,emotionNotificationText, reply_markup=emotionNotificationMarkup, repo=repo)
+            countNTFNotifications = await services.broadcastNotifications(bot,ntrNotifications,ntrNotificationText, reply_markup=ntrNotificationMarkup, repo=repo)
+
+
+            
+    logging.info(f"Regular notifications were sent. NO of emotion notifications: {countEmotionNotifications}. NO of NTR notifications: {countNTFNotifications}")
     
 
     
@@ -113,6 +108,9 @@ if __name__ == "__main__":
         setup_logging()
       
         schedule.every(1).hour.at(":00").do(scheduler_job)
+
+        
+        
 
         while True:
             schedule.run_pending()

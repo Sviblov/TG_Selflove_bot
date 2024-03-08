@@ -124,7 +124,7 @@ async def set_emotion_what_doing(message: Message, state: FSMContext, repo: Requ
         await state.set_data(current_data)
 
         await state.set_state(UserStates.set_ntr_step_2)
-        replyText=await repo.interface.get_messageText('ntr_set_step_1',user.language)
+        replyText=await repo.interface.get_messageText('ntr_set_step_2',user.language)
         await send_message(bot, user.user_id, replyText,reply_markup=ForceReply(),  repo = repo)
 
 

@@ -15,6 +15,7 @@ async def broadcastNotifications(
     text: str,
     disable_notification: bool = False,
     reply_markup: InlineKeyboardMarkup = None,
+    repo: RequestsRepo = None,
 ) -> int:
     """
     Simple broadcaster.
@@ -29,7 +30,7 @@ async def broadcastNotifications(
     try:
         for notification in notifications:
             if await send_message(
-                bot, notification.user_id, text, disable_notification, reply_markup
+                bot, notification.user_id, text, disable_notification, reply_markup, repo=repo
             ):
                 count += 1
             await asyncio.sleep(
@@ -49,7 +50,7 @@ async def send_message(
         reply_markup: InlineKeyboardMarkup = None,
         repo: RequestsRepo = None,
         disable_web_page_preview: bool = True,
-
+    
 ) -> bool:
     """
     Safe messages sender
