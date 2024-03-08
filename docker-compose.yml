@@ -26,6 +26,7 @@ services:
     volumes:
       - ./scheduler:/usr/src/scheduler
       - ./infrastructure:/usr/src/infrastructure
+      - ./tgbot:/usr/src/tgbot
     command: [ "python3", "main.py"]
     restart: always
     env_file:
