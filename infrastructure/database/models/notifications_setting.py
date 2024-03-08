@@ -19,6 +19,7 @@ class notification_setting(Base):
     """
     id: Mapped[int] = mapped_column(BIGINT, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.user_id",ondelete='CASCADE'))
+    language: Mapped[str] = mapped_column(String(10), primary_key=True, server_default=text("'en'"))
     notification_type: Mapped[str]= mapped_column(String(16))
     timedelta: Mapped[int] = mapped_column(String(16))
     notification_time: Mapped[Time] = mapped_column(Time)

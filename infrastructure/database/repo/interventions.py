@@ -169,7 +169,7 @@ class InterventionsRepo(BaseRepo):
             notification_type: str
         ) -> list:
         result = await self.session.execute(
-            select(notification_setting.user_id).where(
+            select(notification_setting).where(
                 (notification_setting.notification_time == notification_hour) & 
                 (notification_setting.notification_type == notification_type)
                 

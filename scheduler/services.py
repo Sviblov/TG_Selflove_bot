@@ -6,11 +6,12 @@ from aiogram import Bot
 from aiogram import exceptions
 from aiogram.types import InlineKeyboardMarkup
 from infrastructure.database.repo.requests import RequestsRepo
+from infrastructure.database.models import notification_setting
 
 
-async def broadcast(
+async def broadcastNotifications(
     bot: Bot,
-    users: list[Union[str, int]],
+    notifications: list[notification_setting],
     text: str,
     disable_notification: bool = False,
     reply_markup: InlineKeyboardMarkup = None,
@@ -26,9 +27,9 @@ async def broadcast(
     """
     count = 0
     try:
-        for user_id in users:
+        for notification in notifications:
             if await send_message(
-                bot, user_id, text, disable_notification, reply_markup
+                bot, notification.user_id, text, disable_notification, reply_markup
             ):
                 count += 1
             await asyncio.sleep(

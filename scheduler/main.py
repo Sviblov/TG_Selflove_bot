@@ -79,19 +79,19 @@ async def main():
     
     async with session_pool() as session:
         repo = RequestsRepo(session)
-        emoDiaryNotificationUsers = await services.get_notifications_this_hour(repo, current_hour, "emodiary")
+        emoDiaryNotifications = await services.get_notifications_this_hour(repo, current_hour, "emodiary")
         emotionNotificationText = await repo.interface.get_messageText('emotionNotification','en')
         emotionNotificationButtons = await repo.interface.get_ButtonLables('emotionNotification', 'en')
         emotionNotificationMarkup = StandardButtonMenu(emotionNotificationButtons)
 
-        ntrNotificationUsers = await services.get_notifications_this_hour(repo, current_hour, "ntr")
+        ntrNotifications = await services.get_notifications_this_hour(repo, current_hour, "ntr")
         ntrNotificationText = await repo.interface.get_messageText('ntrNotification', 'en')
         ntrNotificationButtons = await repo.interface.get_ButtonLables('ntrNotification','en')
         ntrNotificationMarkup = StandardButtonMenu(ntrNotificationButtons)
     
     async with bot.session: 
-        await services.broadcast(bot,emoDiaryNotificationUsers,emotionNotificationText, reply_markup=emotionNotificationMarkup)
-        await services.broadcast(bot,ntrNotificationUsers,ntrNotificationText, reply_markup=ntrNotificationMarkup)
+        await services.broadcastNotifications(bot,emoDiaryNotifications,emotionNotificationText, reply_markup=emotionNotificationMarkup)
+        await services.broadcastNotifications(bot,ntrNotifications,ntrNotificationText, reply_markup=ntrNotificationMarkup)
     
   
         
