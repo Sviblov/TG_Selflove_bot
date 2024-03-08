@@ -113,7 +113,7 @@ async def confirm_start_test_again(callback: CallbackQuery, state: FSMContext, r
     await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
 
 
-@user_callbacks_router.callback_query(F.data.in_({'psysupport','showvideo','interventionDesc','heros_journey','hotline'}), StateFilter(UserStates.main_menu))
+@user_callbacks_router.callback_query(F.data.in_({'psysupport','showvideo','interventionDesc','heros_journey'}), StateFilter(UserStates.main_menu))
 async def show_one_message(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
     if callback.data == 'showvideo':

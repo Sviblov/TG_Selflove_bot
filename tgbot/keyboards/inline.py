@@ -78,14 +78,14 @@ def mainMenuButtons(ButtonsData: List[standard_button], severity_status: int, in
         keyboard.row(
             button_dict['ntr'],button_dict['start_test']
         )
-        if lang_to_use == 'en':
-            keyboard.row(
-                button_dict['hotline'],button_dict['feedback']
-            )
+        # if lang_to_use == 'en':
+        #     keyboard.row(
+        #         button_dict['hotline'],button_dict['feedback']
+        #     )
             
-        keyboard.row(
-            button_dict['security']
-        )
+        # keyboard.row(
+        #     button_dict['security']
+        # )
 
     else:
         keyboard.row(
@@ -100,16 +100,16 @@ def mainMenuButtons(ButtonsData: List[standard_button], severity_status: int, in
         keyboard.row(
             button_dict['start_test']
         )
-        keyboard.row(
-            button_dict['security']
-        )
-        if lang_to_use == 'en':
-            keyboard.row(
-                button_dict['hotline']
-            )
-            keyboard.row(
-                button_dict['feedback']
-            )
+        # keyboard.row(
+        #     button_dict['security']
+        # )
+        # if lang_to_use == 'en':
+        #     keyboard.row(
+        #         button_dict['hotline']
+        #     )
+        #     keyboard.row(
+        #         button_dict['feedback']
+        #     )
 
 
     return keyboard.as_markup()

@@ -148,3 +148,21 @@ async def security_menu(message: Message, state: FSMContext, repo: RequestsRepo,
     
     replyMessage = await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
 
+
+@user_messages_router.message(Command('hotline'))
+async def hotline_menu(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    replyText=await repo.interface.get_messageText('hotline','en')
+    currentState = await state.get_state()
+    if currentState == UserStates.main_menu:
+        backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
+        replyMarkup=StandardButtonMenu(backButton)
+    
+    await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+
+@user_messages_router.message(Command('feedback'))
+async def hotline_menu(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await state.set_state(UserStates.ask_feedback)
+    replyText=await repo.interface.get_messageText('feedback',user.language)
+    replyMarkup = ForceReply()
+    
+    await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
