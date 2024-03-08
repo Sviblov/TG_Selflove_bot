@@ -28,7 +28,7 @@ services:
     command: [ "python3 main.py"]
     restart: always
     env_file:
-      - "../.env"
+      - ".env"
 
   # backend:
   #   image: "backend"
