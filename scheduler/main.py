@@ -75,9 +75,11 @@ async def main():
     logging.info("Starting scheduler")
     current_hour=time.localtime().tm_hour
 
-    emoDiaryNotificationUsers = services.get_notifications_this_hour(repo, current_hour, "emodiary")
+    
+    
     async with session_pool() as session:
         repo = RequestsRepo(session)
+        emoDiaryNotificationUsers = services.get_notifications_this_hour(repo, current_hour, "emodiary")
         
     async with bot.session: 
         await services.broadcast(bot,emoDiaryNotificationUsers,f'Current Time: {time.localtime().tm_hour}:{time.localtime().tm_min}')
