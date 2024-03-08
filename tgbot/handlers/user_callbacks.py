@@ -13,7 +13,8 @@ from infrastructure.database.repo.requests import RequestsRepo
 from infrastructure.database.models.users import User
 
 from ..services.services import send_message, delete_message
-from ..services.send_questionaire import sendNextQuestion, send_main_menu
+from ..services.send_questionaire import sendNextQuestion
+from ..services.send_main_menu import send_main_menu, send_completed_emodiary_menu
 from ..services.put_user_to_default import putUserToDefault
 
 from ..misc.states import UserStates
@@ -175,19 +176,20 @@ async def show_emodiary(callback: CallbackQuery, state: FSMContext, repo: Reques
     emoDiaryStatus = state_data['interventionsStatus']['emodiary']['status']
 
     if emoDiaryStatus:
-        replyText=await repo.interface.get_messageText('emodiary_setup_true',user.language)
-        numberOfnotification = state_data['interventionsStatus']['emodiary']['no_of_notifications']
-        notifications = state_data['interventionsStatus']['emodiary']['notification_time']
-        delta = state_data['interventionsStatus']['emodiary']['timedelta']
-        notifications_formated = ', '.join(notifications)
-        timezone = 'UTC '+str(delta)
-        replyTextFormatted = replyText.format(numberOfnotification,notifications_formated,timezone)
+        send_completed_emodiary_menu(repo, bot, user.user_id, user.language, state)
+        # replyText=await repo.interface.get_messageText('emodiary_setup_true',user.language)
+        # numberOfnotification = state_data['interventionsStatus']['emodiary']['no_of_notifications']
+        # notifications = state_data['interventionsStatus']['emodiary']['notification_time']
+        # delta = state_data['interventionsStatus']['emodiary']['timedelta']
+        # notifications_formated = ', '.join(notifications)
+        # timezone = 'UTC '+str(delta)
+        # replyTextFormatted = replyText.format(numberOfnotification,notifications_formated,timezone)
 
 
-        replyButtons= await repo.interface.get_ButtonLables('emodiary_setup_true', user.language)
-        backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
-        replyMarkup = EmoDiarySetupTrue(replyButtons+backButton)
-        await send_message(bot, user.user_id, replyTextFormatted, reply_markup=replyMarkup, repo = repo)
+        # replyButtons= await repo.interface.get_ButtonLables('emodiary_setup_true', user.language)
+        # backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
+        # replyMarkup = EmoDiarySetupTrue(replyButtons+backButton)
+        # await send_message(bot, user.user_id, replyTextFormatted, reply_markup=replyMarkup, repo = repo)
 
     else:
         replyText=await repo.interface.get_messageText('emodiary_setup_false',user.language)
@@ -283,7 +285,11 @@ async def show_emodiary_setup_step_2(callback: CallbackQuery, state: FSMContext,
         
         # await repo.interventions.setNotificationTime(user.user_id,'emodiary',delta, notifications)
         await state.set_data(stateData)
-        await send_main_menu(bot, user.user_id, user.language, state, repo)
+
+
+        #TODO here instead of sending main menu send emotional diary markup with true
+        await send_completed_emodiary_menu(repo, bot, user.user_id, user.language, state,message_to_change=callback.message)
+        # await send_main_menu(bot, user.user_id, user.language, state, repo)
     else:
         replyButtons = await repo.interface.get_ButtonLables('emodiary_setup_step_3', user.language)
         replyText = await repo.interface.get_messageText('emodiary_setup_step_3',user.language)
