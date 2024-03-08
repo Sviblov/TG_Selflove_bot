@@ -12,14 +12,11 @@ from tgbot.middlewares.config import ConfigMiddleware
 from tgbot.middlewares.database import DatabaseMiddleware
 from tgbot.middlewares.messageLogging import LoggingMiddleware
 from tgbot.services import services
-from aiogram.methods.send_message import SendMessage
-from aiogram.types import BufferedInputFile
+
 
 
 from infrastructure.database.setup import create_engine
 from infrastructure.database.setup import create_session_pool
-
-from tgbot.handlers.poll_answer import poll_answer_router
 
 async def on_startup(bot: Bot, admin_ids: list[int]):
     await services.broadcast(bot, admin_ids, "Бот запущен")
