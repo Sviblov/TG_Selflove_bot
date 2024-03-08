@@ -8,7 +8,7 @@ from .services import send_message
 from infrastructure.database.repo.requests import RequestsRepo
 from infrastructure.database.models.questions import question, answer_option
 from ..misc.states import UserStates
-from tgbot.keyboards.inline import mainMenuButtons, EmoDiarySetupTrue
+from tgbot.keyboards.inline import mainMenuButtons, EmoDiarySetupTrue,ntrSetupTrue
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from infrastructure.database.models.users import User
@@ -57,6 +57,28 @@ async def send_completed_emodiary_menu(repo: RequestsRepo, bot: Bot, user: User,
     replyButtons= await repo.interface.get_ButtonLables('emodiary_setup_true', user.language)
     backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
     replyMarkup = EmoDiarySetupTrue(replyButtons+backButton)
+    if message_to_change:
+        await bot.edit_message_text(replyTextFormatted, message_to_change.chat.id, message_to_change.message_id, reply_markup=replyMarkup)
+    else:
+        await send_message(bot, user.user_id, replyTextFormatted, reply_markup=replyMarkup, repo = repo)
+
+
+async def send_completed_ntr_menu(repo: RequestsRepo, bot: Bot, user: User, state: FSMContext, message_to_change: Message=None):
+    
+    state_data = await state.get_data()
+    replyText=await repo.interface.get_messageText('ntr_setup_true',user.language)
+    notifications = state_data['interventionsStatus']['ntr']['notification_time']
+    delta = state_data['interventionsStatus']['ntr']['timedelta']
+    notifications_formated = notifications
+    timezone = 'UTC '+str(delta)
+    replyTextFormatted = replyText.format(notifications_formated,timezone)
+
+
+    replyButtons= await repo.interface.get_ButtonLables('ntr_setup_true', user.language)
+    backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
+    #TODO
+    replyMarkup = ntrSetupTrue(replyButtons+backButton)
+
     if message_to_change:
         await bot.edit_message_text(replyTextFormatted, message_to_change.chat.id, message_to_change.message_id, reply_markup=replyMarkup)
     else:
