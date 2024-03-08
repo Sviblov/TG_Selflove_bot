@@ -25,6 +25,7 @@ services:
     working_dir: "/usr/src/scheduler"
     volumes:
       - ./scheduler:/usr/src/scheduler
+      - ./infrastructure:/usr/src/infrastructure
     command: [ "python3", "main.py"]
     restart: always
     env_file:

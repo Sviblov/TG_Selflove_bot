@@ -18,7 +18,7 @@ import betterlogging as bl
 from aiogram import Bot
  
 from infrastructure.database.repo.requests import RequestsRepo
-
+from services import broadcast
 
 
 
