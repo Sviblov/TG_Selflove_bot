@@ -28,7 +28,7 @@ from infrastructure.database.setup import create_engine
 from infrastructure.database.setup import create_session_pool
 
 from tgbot.config import load_config
-
+from tgbot.keyboards.inline import StandardButtonMenu
 
 
 
@@ -80,10 +80,23 @@ async def main():
     async with session_pool() as session:
         repo = RequestsRepo(session)
         emoDiaryNotificationUsers = await services.get_notifications_this_hour(repo, current_hour, "emodiary")
-        
+        emotionNotificationText = await repo.interface.get_messageText('emotionNotification')
+        emotionNotificationButtons = await repo.interface.get_ButtonLables('emotionNotification')
+        emotionNotificationMarkup = StandardButtonMenu(emotionNotificationButtons)
+
+        ntrNotificationUsers = await services.get_notifications_this_hour(repo, current_hour, "ntr")
+        ntrNotificationText = await repo.interface.get_messageText('ntrNotification')
+        ntrNotificationButtons = await repo.interface.get_ButtonLables('ntrNotification')
+        ntrNotificationMarkup = StandardButtonMenu(ntrNotificationButtons)
+    
     async with bot.session: 
-        await services.broadcast(bot,emoDiaryNotificationUsers,f'Current Time: {time.localtime().tm_hour}:{time.localtime().tm_min}')
+        await services.broadcast(bot,emoDiaryNotificationUsers,emotionNotificationText, reply_markup=emotionNotificationMarkup)
+        await services.broadcast(bot,ntrNotificationUsers,ntrNotificationText, reply_markup=ntrNotificationMarkup)
+    
   
+        
+    
+    
     
     # await on_startup(bot, config.tg_bot.admin_ids)
     logging.info("Scheduler ended")
