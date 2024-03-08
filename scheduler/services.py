@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from typing import Union, List
-import time
+from datetime import time
 from aiogram import Bot
 from aiogram import exceptions
 from aiogram.types import InlineKeyboardMarkup
