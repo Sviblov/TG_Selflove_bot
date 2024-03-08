@@ -90,7 +90,7 @@ async def main():
         repo = RequestsRepo(session)
         
     
-
+    logging.info(f"Bot Token: {config.tg_bot.token}")
     async with bot.session: 
         await bot.send_message('5516377862','testing')
   

@@ -28,7 +28,7 @@ services:
       - ./infrastructure:/usr/src/infrastructure
       - ./tgbot:/usr/src/tgbot
     command: [ "python3", "main.py"]
-    
+    # restart: always
     env_file:
       - ".env"
 
