@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from typing import Union, List
-
+import time
 from aiogram import Bot
 from aiogram import exceptions
 from aiogram.types import InlineKeyboardMarkup
@@ -91,3 +91,16 @@ async def send_message(
         logging.info(f"Target [ID:{user_id}]: success")
         return True
     return False
+
+
+async def get_notifications_this_hour(
+    repo: RequestsRepo, notification_hour: int, notification_type: str
+) -> List[dict]:
+    """
+        Get notifications for this hour
+
+    """
+
+    current_hour = time(notification_hour,0,0)
+    
+    return await repo.interventions.getNotificationsThisHour(current_hour, notification_type)

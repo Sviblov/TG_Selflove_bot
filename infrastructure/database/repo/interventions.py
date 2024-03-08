@@ -162,3 +162,17 @@ class InterventionsRepo(BaseRepo):
         await self.session.execute(delete_emotions)
         await self.session.commit()
         return 'done'
+    
+    async def getNotificationsThisHour(
+            self,
+            notification_hour: int,
+            notification_type: str
+        ) -> list:
+        result = await self.session.execute(
+            select(notification_setting.user_id).where(
+                (notification_setting.notification_time == notification_hour) & 
+                (notification_setting.notification_type == notification_type)
+                
+            )
+        )
+        return result.scalars()
