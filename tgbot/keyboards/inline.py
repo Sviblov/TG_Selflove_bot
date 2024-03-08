@@ -160,7 +160,7 @@ def EmoDiarySetupMarkup(ButtonsData: List[standard_button], back_button: standar
             text=button.button_text,
             callback_data=button.callback_data
             text=text[0]
-            for i in range(0,23):
+            for i in range(0,24):
                 adjusted_time = str(i)+':00'
                 
                 newbutton = InlineKeyboardButton(
