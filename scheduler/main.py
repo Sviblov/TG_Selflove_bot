@@ -80,13 +80,13 @@ async def main():
     async with session_pool() as session:
         repo = RequestsRepo(session)
         emoDiaryNotificationUsers = await services.get_notifications_this_hour(repo, current_hour, "emodiary")
-        emotionNotificationText = await repo.interface.get_messageText('emotionNotification')
-        emotionNotificationButtons = await repo.interface.get_ButtonLables('emotionNotification')
+        emotionNotificationText = await repo.interface.get_messageText('emotionNotification','en')
+        emotionNotificationButtons = await repo.interface.get_ButtonLables('emotionNotification', 'en')
         emotionNotificationMarkup = StandardButtonMenu(emotionNotificationButtons)
 
         ntrNotificationUsers = await services.get_notifications_this_hour(repo, current_hour, "ntr")
-        ntrNotificationText = await repo.interface.get_messageText('ntrNotification')
-        ntrNotificationButtons = await repo.interface.get_ButtonLables('ntrNotification')
+        ntrNotificationText = await repo.interface.get_messageText('ntrNotification', 'en')
+        ntrNotificationButtons = await repo.interface.get_ButtonLables('ntrNotification','en')
         ntrNotificationMarkup = StandardButtonMenu(ntrNotificationButtons)
     
     async with bot.session: 

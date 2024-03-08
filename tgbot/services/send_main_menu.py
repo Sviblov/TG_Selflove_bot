@@ -43,7 +43,7 @@ async def send_main_menu(
     await send_message(bot, user_id, formattedText, reply_markup=mainMenuMarkup, repo = repo)
     
 
-async def send_completed_emodiary_menu(repo: RequestsRepo, bot: Bot, user: User, language: str, state: FSMContext, message_to_change: Message=None):
+async def send_completed_emodiary_menu(repo: RequestsRepo, bot: Bot, user: User, state: FSMContext, message_to_change: Message=None):
     state_data = await state.get_data()
     replyText=await repo.interface.get_messageText('emodiary_setup_true',user.language)
     numberOfnotification = state_data['interventionsStatus']['emodiary']['no_of_notifications']

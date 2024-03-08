@@ -176,7 +176,7 @@ async def show_emodiary(callback: CallbackQuery, state: FSMContext, repo: Reques
     emoDiaryStatus = state_data['interventionsStatus']['emodiary']['status']
 
     if emoDiaryStatus:
-        send_completed_emodiary_menu(repo, bot, user.user_id, user.language, state)
+        send_completed_emodiary_menu(repo, bot, user,  state)
         # replyText=await repo.interface.get_messageText('emodiary_setup_true',user.language)
         # numberOfnotification = state_data['interventionsStatus']['emodiary']['no_of_notifications']
         # notifications = state_data['interventionsStatus']['emodiary']['notification_time']
@@ -288,7 +288,8 @@ async def show_emodiary_setup_step_2(callback: CallbackQuery, state: FSMContext,
 
 
         #TODO here instead of sending main menu send emotional diary markup with true
-        await send_completed_emodiary_menu(repo, bot, user.user_id, user.language, state,message_to_change=callback.message)
+        await send_completed_emodiary_menu(repo, bot, user, 
+                                            state,message_to_change=callback.message)
         # await send_main_menu(bot, user.user_id, user.language, state, repo)
     else:
         replyButtons = await repo.interface.get_ButtonLables('emodiary_setup_step_3', user.language)
