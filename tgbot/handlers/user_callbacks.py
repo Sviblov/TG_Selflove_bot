@@ -217,7 +217,7 @@ async def show_emodiary_setup_step_1(callback: CallbackQuery, state: FSMContext,
 
     numberOfNotification = int(callback.data[-1])
     if numberOfNotification == 0:
-        repo.interventions.deleteNotificationTime(user.user_id, 'emodiary') 
+        await repo.interventions.deleteNotificationTime(user.user_id, 'emodiary') 
         stateData = await state.get_data()  
         stateData['interventionsStatus']['emodiary']['no_of_notifications'] = 0
         stateData['interventionsStatus']['emodiary']['notification_time'] = ['Do Not Notify']
