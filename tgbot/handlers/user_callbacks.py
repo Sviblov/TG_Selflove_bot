@@ -281,8 +281,9 @@ async def show_emodiary_setup_step_2(callback: CallbackQuery, state: FSMContext,
                 selected_hour_utc = selected_hour_utc-24
             elif selected_hour_utc<0:
                 selected_hour_utc = selected_hour_utc+24
-                
-            await repo.interventions.setNotificationTime(user.user_id,'emodiary',str(delta), time(selected_hour_utc,0,0))
+            
+            lang_to_use = await repo.users.getUserLanguage(user.user_id)
+            await repo.interventions.setNotificationTime(user.user_id,'emodiary',str(delta), time(selected_hour_utc,0,0), lang_to_use)
         
         # await repo.interventions.setNotificationTime(user.user_id,'emodiary',delta, notifications)
         await state.set_data(stateData)
@@ -398,8 +399,9 @@ async def show_ntr_setup_step_2(callback: CallbackQuery, state: FSMContext, repo
         elif selected_hour_utc<0:
             selected_hour_utc = selected_hour_utc+24
         
+        lang_to_use = await repo.users.getUserLanguage(user.user_id)
         await repo.interventions.deleteNotificationTime(user.user_id, 'ntr')
-        await repo.interventions.setNotificationTime(user.user_id,'ntr',str(delta), time(selected_hour_utc,0,0))
+        await repo.interventions.setNotificationTime(user.user_id,'ntr',str(delta), time(selected_hour_utc,0,0),lang_to_use)
         stateData['interventionsStatus']['ntr']['status'] = True
         await state.set_data(stateData)
         await send_completed_ntr_menu(repo, bot, user,  state, message_to_change=callback.message)
@@ -501,6 +503,6 @@ async def switch_language(callback: CallbackQuery, state: FSMContext, repo: Requ
     await callback.answer()
     language = callback.data.split('_')[-1]
     await repo.users.setUserLanguage(user.user_id, language)
-    
+    await repo.interventions.updateNotificationLanguage(user.user_id, language)
     replyMessage = await repo.interface.get_messageText('language_switched',language)
     await send_message(bot, user.user_id, replyMessage, repo = repo)

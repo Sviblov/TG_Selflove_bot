@@ -99,7 +99,8 @@ class InterfaceRepo(BaseRepo):
             )
             
             result = await self.session.execute(select_data)
-            
+            result = result.scalars().all()
+
             message_dict={}
             for row in result:
                 if row.language == 'en':

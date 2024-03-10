@@ -109,18 +109,24 @@ async def main():
 
 if __name__ == "__main__":
     try:
-        def scheduler_job():
-            asyncio.run(main())
-        
+
         setup_logging()
+        
+        # def scheduler_job():
+        #     asyncio.run(main())
+        
       
-        schedule.every(1).hour.at(":00").do(scheduler_job)
+      
+        # schedule.every(1).hour.at(":00").do(scheduler_job)
 
         
         
 
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
+        # while True:
+        #     schedule.run_pending()
+        #     time.sleep(1)
+
+        asyncio.run(main())
+
     except (KeyboardInterrupt, SystemExit):
         logging.error("Бот остановлен")

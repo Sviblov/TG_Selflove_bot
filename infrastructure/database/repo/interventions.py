@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 
 
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, update
 from sqlalchemy.dialects.postgresql import insert
 
 from infrastructure.database.models import standard_message,standard_button, supported_language, notification_setting
@@ -118,7 +118,8 @@ class InterventionsRepo(BaseRepo):
             user_id: int,
             notification_type: str,
             timedelta: int,
-            notification_time: str
+            notification_time: str,
+            language: str
         ) -> str:
         
         
@@ -128,8 +129,8 @@ class InterventionsRepo(BaseRepo):
             user_id=user_id,
             notification_time=notification_time,
             timedelta=timedelta,
-            notification_type=notification_type
-            
+            notification_type=notification_type,
+            language=language
             ).returning(notification_setting)
         
         result = await self.session.execute(insert_result)
@@ -176,3 +177,17 @@ class InterventionsRepo(BaseRepo):
             )
         )
         return result.scalars()
+
+    async def updateNotificationLanguage(
+            self,
+            user_id: int,
+            language: str
+        ):
+        
+        result = await self.session.execute(
+            update(notification_setting).where(
+                notification_setting.user_id == user_id
+            ).values(language=language)
+        )
+        await self.session.commit()
+        return result
