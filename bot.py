@@ -115,7 +115,7 @@ async def main():
     register_global_middlewares(dp, config, bot, session_pool)
 
     await on_startup(bot, config.tg_bot.admin_ids)
-    await dp.start_polling(bot)
+    await dp.start_polling(bot, skip_updates=True)
 
 
 if __name__ == "__main__":

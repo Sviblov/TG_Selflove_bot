@@ -12,6 +12,11 @@ services:
       context: .
     command: "bash docker-entrypoint.sh"
     restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     env_file:
       - ".env"
 
@@ -27,6 +32,11 @@ services:
       - ./scheduler:/usr/src/scheduler
       - ./infrastructure:/usr/src/infrastructure
       - ./tgbot:/usr/src/tgbot
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     command: [ "python3", "main.py"]
     restart: always
     env_file:
