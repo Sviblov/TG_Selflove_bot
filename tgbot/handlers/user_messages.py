@@ -48,6 +48,29 @@ async def user_start(message: Message, state: FSMContext, repo: RequestsRepo, bo
     
     await state.set_state(UserStates.welcome_new_user_1)
 
+@user_messages_router.message(CommandStart(),StateFilter(None,UserStates.welcome_new_user_1))
+async def send_second_message(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+   
+    
+    replyText=await repo.interface.get_messageText('welcome_new_2',user.language)
+    replyButtons= await repo.interface.get_ButtonLables('welcome_new_2', user.language)
+    replyMarkup=StandardButtonMenu(replyButtons)
+    
+    await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+    
+    
+    await state.set_state(UserStates.welcome_new_user_2)
+
+
+@user_messages_router.message(CommandStart(),StateFilter(None,UserStates.welcome_new_user_2))
+async def send_third_message(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+ 
+    replyText=await repo.interface.get_messageText('welcome_new_3',user.language)
+    replyButtons= await repo.interface.get_ButtonLables('welcome_new_3', user.language)
+    replyMarkup=StandardButtonMenu(replyButtons)
+    
+    await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
+
 @user_messages_router.message(Command('security'))
 async def security_menu(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     replyText=await repo.interface.get_messageText('security_desc','en')

@@ -502,4 +502,4 @@ async def switch_language(callback: CallbackQuery, state: FSMContext, repo: Requ
     await repo.users.setUserLanguage(user.user_id, language)
     
     replyMessage = await repo.interface.get_messageText('language_switched',language)
-    await bot.send_message(user.user_id, replyMessage)
+    await send_message(bot, user.user_id, replyMessage)
