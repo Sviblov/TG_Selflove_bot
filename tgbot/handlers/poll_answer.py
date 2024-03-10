@@ -20,11 +20,12 @@ logger = logging.getLogger('Poll_Answer')
 @poll_answer_router.poll_answer()
 async def register_poll_answer(poll_answer: PollAnswer, state: FSMContext, repo: RequestsRepo, bot: Bot):
     
+    language= await repo.users.getUserLanguage(poll_answer.user.id)
     
     #check that questionaire is complete
     if poll_answer.option_ids:
         await repo.results.updatePollResult(poll_answer.poll_id, poll_answer.option_ids[0])
-        await sendNextQuestion(bot, poll_answer.user.id,1,'en',state, repo)
+        await sendNextQuestion(bot, poll_answer.user.id,1,language,state, repo)
     else:
         await repo.results.updatePollResult(poll_answer.poll_id)
     

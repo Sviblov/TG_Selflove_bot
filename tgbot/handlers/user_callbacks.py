@@ -36,13 +36,13 @@ async def start_test(callback: CallbackQuery, state: FSMContext, repo: RequestsR
         await repo.results.deleteLastSentPolls(user.user_id)
 
     state_data = await state.get_data()
-    state_data['polls_left']=await repo.questions.get_NumberOfQuestions(1,'en')
+    state_data['polls_left']=await repo.questions.get_NumberOfQuestions(1,user.language)
     state_data['current_question']=1
-  
+    language = await repo.users.getUserLanguage(user.user_id)
     await state.set_data(state_data)
     await state.set_state(UserStates.active_poll)
 
-    await sendNextQuestion(bot, user.user_id,1,'en',state, repo)
+    await sendNextQuestion(bot, user.user_id,1,language,state, repo)
 
 
 
@@ -50,7 +50,8 @@ async def start_test(callback: CallbackQuery, state: FSMContext, repo: RequestsR
 @user_callbacks_router.callback_query(F.data=="start_test", StateFilter(UserStates.active_poll))
 async def notify_about_started_test(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
-    replyText=await repo.interface.get_messageText('active_poll','en')
+    language = await repo.users.getUserLanguage(user.user_id)
+    replyText=await repo.interface.get_messageText('active_poll',language)
     replyMessage = await send_message(bot, user.user_id, replyText, repo=repo)
 
 
@@ -502,4 +503,4 @@ async def switch_language(callback: CallbackQuery, state: FSMContext, repo: Requ
     await repo.users.setUserLanguage(user.user_id, language)
     
     replyMessage = await repo.interface.get_messageText('language_switched',language)
-    await send_message(bot, user.user_id, replyMessage)
+    await send_message(bot, user.user_id, replyMessage, repo = repo)
