@@ -68,8 +68,22 @@ class InterfaceRepo(BaseRepo):
         if row:
              return row.message    
         else:
-            logger.error("Error code no messages defined when queryng standard messages")
-            return 'Error code 1. Contact administrator'
+            
+            logger.warn(f"No Russian messages defined when queryng standard messages: {key}")
+            select_data_en = (
+                select(standard_message).where(
+                    standard_message.key==key,
+                    standard_message.language=='en'
+                    )
+            )
+
+            row_en: standard_message = await self.session.scalar(select_data_en)
+            if row_en:
+                return row_en.message
+            else:
+
+                logger.error(f"Error code no messages defined when queryng standard messages: {key}")
+                return 'Message error. Contact administrator'
             
 
 
@@ -80,16 +94,31 @@ class InterfaceRepo(BaseRepo):
         language: str
     ):
         lang_to_use = await self.getSupportedLanguage(language)
+
         select_data = (
             select(standard_button).where(
                 standard_button.menu_key==menu_key,
                 standard_button.language==lang_to_use
                 )
         )
+
+        
         
         rows = await self.session.execute(select_data)
-        
-        return rows.scalars().all()
+        rows_scalar = rows.scalars().all()
+        if len(rows_scalar) > 0:
+            return rows_scalar
+        else: 
+            logger.warn(f"No Russian buttons defined when queryng standard button: {menu_key}")
+            select_data_en = (
+                select(standard_button).where(
+                    standard_button.menu_key==menu_key,
+                    standard_button.language=='en'
+                    )
+            )
+            rows_en = await self.session.execute(select_data_en)
+            return rows_en.scalars().all()
+
     
 
     async def putFeedback(

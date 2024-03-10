@@ -492,3 +492,14 @@ async def generate_reports(callback: CallbackQuery, state: FSMContext, repo: Req
     
     document = await bot.send_document(user.user_id, text_file)
     await repo.log_message.put_message(document,user.user_id, bot.id)
+
+
+
+@user_callbacks_router.callback_query(F.data.contains('switgh_language_to_'))
+async def switch_language(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    language = callback.data.split('_')[-1]
+    await repo.users.setUserLanguage(user.user_id, language)
+    
+    replyMessage = await repo.interface.get_messageText('language_switched',language)
+    await repo.bot.send_message(user.user_id, replyMessage)

@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, update
 from sqlalchemy.dialects.postgresql import insert
 
 from infrastructure.database.models import User,supported_language
@@ -75,4 +75,22 @@ class UserRepo(BaseRepo):
         result = await self.session.execute(delete_data)
         await self.session.commit()
         return result
-    
+
+    async def getUserLanguage(
+        self,
+        user_id: int
+    ):
+        select_data = select(User.language).where(User.user_id==user_id)
+        result = await self.session.execute(select_data)
+        first_row = result.first()
+        return first_row.language
+
+    async def setUserLanguage(
+        self,
+        user_id: int,
+        language: str
+    ):
+        update_data = update(User).where(User.user_id==user_id).values(language=language)
+        result = await self.session.execute(update_data)
+        await self.session.commit()
+        return result
