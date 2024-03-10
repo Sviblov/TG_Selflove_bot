@@ -322,14 +322,23 @@ async def show_ntrdiary(callback: CallbackQuery, state: FSMContext, repo: Reques
 
 
 
-@user_callbacks_router.callback_query(F.data=='ntr_setup_step_1', StateFilter(UserStates.main_menu))
+@user_callbacks_router.callback_query(F.data.contains('ntr_setup_step_1'), StateFilter(UserStates.main_menu))
 async def show_ntr_setup(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
     await callback.answer()
+    isConfiguredString=callback.data.split('_')[4]
+    if isConfiguredString == 'true':
+        stopButton = await repo.interface.get_ButtonLables('ntr_stop_notifications', user.language)
+        
 
+        
     replyButtons = await repo.interface.get_ButtonLables('ntr_setup_step_1', user.language)
     backButton = await repo.interface.get_ButtonLables('back_to_main', user.language)
-    #TODO
-    replyMarkup = EmoDiarySetupMarkup(replyButtons,backButton,2)
+    
+    if isConfiguredString == 'true':
+        stopButton = await repo.interface.get_ButtonLables('ntr_stop_notifications', user.language)
+        replyMarkup = EmoDiarySetupMarkup(replyButtons,[stopButton[0],backButton[0]],2)
+    else:
+        replyMarkup = EmoDiarySetupMarkup(replyButtons,backButton,2)
     replyText = await repo.interface.get_messageText('ntr_setup_step_1',user.language)
     
     stateData = await state.get_data()
@@ -339,6 +348,21 @@ async def show_ntr_setup(callback: CallbackQuery, state: FSMContext, repo: Reque
     await state.set_data(stateData)
 
     await callback.message.edit_text(replyText, reply_markup=replyMarkup) 
+
+@user_callbacks_router.callback_query(F.data.contains('ntr_notif_0'), StateFilter(UserStates.main_menu))
+async def show_ntr_setup(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
+    await callback.answer()
+    await state.set_state(UserStates.main_menu)
+    await repo.interventions.deleteNotificationTime(user.user_id, 'ntr')
+
+    stateData = await state.get_data()  
+
+    stateData['interventionsStatus']['ntr']['notification_time'] = 'Not Defined'
+    stateData['interventionsStatus']['ntr']['timedelta'] = 'Not defined'
+    stateData['interventionsStatus']['ntr']['status'] = True
+    await state.set_data(stateData)
+    await send_completed_ntr_menu(repo, bot, user, state, message_to_change=callback.message)
+    
 
 @user_callbacks_router.callback_query(F.data.contains('ntrutc_'), StateFilter(UserStates.main_menu))
 async def show_ntr_setup_step_2(callback: CallbackQuery, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
