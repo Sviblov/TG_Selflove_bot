@@ -84,8 +84,29 @@ class InterfaceRepo(BaseRepo):
 
                 logger.error(f"Error code no messages defined when queryng standard messages: {key}")
                 return 'Message error. Contact administrator'
-            
 
+    async def get_messageTextNotification(
+            self,
+            key: str
+        ):
+            
+           
+        
+            select_data = (
+                select(standard_message).where(
+                    standard_message.key==key
+                    )
+            )
+            
+            result = await self.session.execute(select_data)
+            
+            message_dict={}
+            for row in result:
+                if row.language == 'en':
+                    message_dict['en'] = row.message
+                if row.language == 'ru':
+                    message_dict['ru'] = row.message
+            return message_dict
 
 
     async def get_ButtonLables(
@@ -118,7 +139,34 @@ class InterfaceRepo(BaseRepo):
             )
             rows_en = await self.session.execute(select_data_en)
             return rows_en.scalars().all()
+        
+    async def get_ButtonLablesNotification(
+        self,
+        menu_key: str
+    ):
+       
+        select_data = (
+            select(standard_button).where(
+                standard_button.menu_key==menu_key
+                )
+        )
 
+        
+        
+        rows = await self.session.execute(select_data)
+        rows_scalar = rows.scalars().all()
+        button_dict = {
+            'en': [],
+            'ru': []
+        }
+        for  button in rows_scalar:
+
+            if button.language == 'en':
+                button_dict['en'].append(button)
+            if button.language == 'ru':
+                button_dict['ru'].append(button)
+       
+        return button_dict
     
 
     async def putFeedback(

@@ -12,9 +12,9 @@ from infrastructure.database.models import notification_setting
 async def broadcastNotifications(
     bot: Bot,
     notifications: list[notification_setting],
-    text: str,
+    text,
     disable_notification: bool = False,
-    reply_markup: InlineKeyboardMarkup = None,
+    reply_markup = None,
     repo: RequestsRepo = None,
 ) -> int:
     """
@@ -29,8 +29,10 @@ async def broadcastNotifications(
     count = 0
     try:
         for notification in notifications:
+            notification_lang = notification.language
+            
             if await send_message(
-                bot, notification.user_id, text, disable_notification, reply_markup, repo=repo
+                bot, notification.user_id, text[notification_lang], disable_notification, reply_markup[notification_lang], repo=repo
             ):
                 count += 1
             await asyncio.sleep(

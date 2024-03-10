@@ -80,14 +80,21 @@ async def main():
     async with session_pool() as session:
         repo = RequestsRepo(session)
         emoDiaryNotifications = await services.get_notifications_this_hour(repo, current_hour, "emodiary")
-        emotionNotificationText = await repo.interface.get_messageText('emotionNotification','en')
-        emotionNotificationButtons = await repo.interface.get_ButtonLables('emotionNotification', 'en')
-        emotionNotificationMarkup = StandardButtonMenu(emotionNotificationButtons)
+        emotionNotificationText = await repo.interface.get_messageTextNotification('emotionNotification')
+        emotionNotificationButtons = await repo.interface.get_ButtonLablesNotification('emotionNotification')
+        
+        emotionNotificationMarkup = {
+            'en': StandardButtonMenu(emotionNotificationButtons['en']),
+            'ru': StandardButtonMenu(emotionNotificationButtons['ru'])
+        }
 
         ntrNotifications = await services.get_notifications_this_hour(repo, current_hour, "ntr")
-        ntrNotificationText = await repo.interface.get_messageText('ntrNotification', 'en')
-        ntrNotificationButtons = await repo.interface.get_ButtonLables('ntrNotification','en')
-        ntrNotificationMarkup = StandardButtonMenu(ntrNotificationButtons)
+        ntrNotificationText = await repo.interface.get_messageTextNotification('ntrNotification')
+        ntrNotificationButtons = await repo.interface.get_ButtonLablesNotification('ntrNotification')
+        ntrNotificationMarkup = {
+            'en': StandardButtonMenu(ntrNotificationButtons['en']),
+            'ru': StandardButtonMenu(ntrNotificationButtons['ru'])
+        }
         async with bot.session: 
             countEmotionNotifications = await services.broadcastNotifications(bot,emoDiaryNotifications,emotionNotificationText, reply_markup=emotionNotificationMarkup, repo=repo)
             countNTFNotifications = await services.broadcastNotifications(bot,ntrNotifications,ntrNotificationText, reply_markup=ntrNotificationMarkup, repo=repo)
