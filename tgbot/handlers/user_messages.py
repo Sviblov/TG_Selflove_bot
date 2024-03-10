@@ -73,8 +73,8 @@ async def send_third_message(message: Message, state: FSMContext, repo: Requests
 
 @user_messages_router.message(Command('security'))
 async def security_menu(message: Message, state: FSMContext, repo: RequestsRepo, bot: Bot, user: User):
-    replyText=await repo.interface.get_messageText('security_desc','en')
-    replyButtons= await repo.interface.get_ButtonLables('security_desc', 'en')
+    replyText=await repo.interface.get_messageText('security_desc',user.language)
+    replyButtons= await repo.interface.get_ButtonLables('security_desc', user.language)
     replyMarkup=StandardButtonMenu(replyButtons)
     
     replyMessage = await send_message(bot, user.user_id, replyText, reply_markup=replyMarkup, repo = repo)
