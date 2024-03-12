@@ -27,6 +27,10 @@ class QuestionRepo(BaseRepo):
         #         )
         # )
 
+        valid_languages = ['en', 'ru']
+        if notification_lang not in valid_languages:
+            notification_lang = 'en'
+
         select_data = select(question).where(question.questionaire_id==questionaire_id, question.order == order,question.language==language)
 
         questions = await self.session.execute(select_data)
