@@ -69,7 +69,7 @@ class QuestionRepo(BaseRepo):
         else:
             lang_to_use = language
 
-        select_data = select(answer_option).where(answer_option.question_id==question_id, answer_option.language==valid_languages)
+        select_data = select(answer_option).where(answer_option.question_id==question_id, answer_option.language==lang_to_use)
 
         answers = await self.session.execute(select_data)
 
