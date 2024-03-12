@@ -124,7 +124,7 @@ def EmoDiarySetupMarkup(ButtonsData: List[standard_button], back_button: standar
                 text=button.button_text,
                 callback_data=button.callback_data
                 )
-            if 'Notify' in button.button_text:
+            if button.callback_data == 'emodiary_notif_0':
                 keyboard.row(newbutton)
             else:
                 keyboard.add(newbutton)
