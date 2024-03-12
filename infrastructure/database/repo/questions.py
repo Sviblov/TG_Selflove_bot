@@ -45,9 +45,13 @@ class QuestionRepo(BaseRepo):
         language: str,
     ) -> int:
         
-   
+        valid_languages = ['en', 'ru']
+        if language not in valid_languages:
+            lang_to_use = 'en'
+        else:
+            lang_to_use = language
         
-        select_data = select(func.count(question.order)).where(question.questionaire_id==questionaire_id, question.language==language)
+        select_data = select(func.count(question.order)).where(question.questionaire_id==questionaire_id, question.language==lang_to_use)
 
         questions = await self.session.execute(select_data)
 
@@ -59,7 +63,13 @@ class QuestionRepo(BaseRepo):
         language: str,
     ) -> List[answer_option]:
         
-        select_data = select(answer_option).where(answer_option.question_id==question_id, answer_option.language==language)
+        valid_languages = ['en', 'ru']
+        if language not in valid_languages:
+            lang_to_use = 'en'
+        else:
+            lang_to_use = language
+
+        select_data = select(answer_option).where(answer_option.question_id==question_id, answer_option.language==valid_languages)
 
         answers = await self.session.execute(select_data)
 
