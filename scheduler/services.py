@@ -31,9 +31,9 @@ async def broadcastNotifications(
         for notification in notifications:
             notification_lang = notification.language
             
-        valid_languages = ['en', 'ru']
-        if notification_lang not in valid_languages:
-            notification_lang = 'en'
+            valid_languages = ['en', 'ru']
+            if notification_lang not in valid_languages:
+                notification_lang = 'en'
 
             if await send_message(
                 bot, notification.user_id, text[notification_lang], disable_notification, reply_markup[notification_lang], repo=repo
