@@ -28,8 +28,19 @@ async def send_main_menu(
     lang_to_use = await repo.users.supported_language(language)
     stateData = await state.get_data()
     interventionStatus= stateData['interventionsStatus']
-    severity_status = await repo.results.getSeverityStatus(user_id)
 
+    severity_status = await repo.results.getSeverityStatus(user_id)
+    if not severity_status:
+        results = await repo.results.calculateTestResult(user_id)
+        numberOfQuestions = await repo.questions.get_NumberOfQuestions(1,lang_to_use)
+        if results<numberOfQuestions*4*0.65:
+            severity_status = 0;
+        elif results<numberOfQuestions*4*0.84:
+            severity_status = 1;
+        else:
+            severity_status = 2;
+
+        await repo.results.saveTestResult(user_id,results, severity_status)
 
 
     replyText = await repo.interface.get_messageText(f'main_menu_{severity_status}', lang_to_use)
